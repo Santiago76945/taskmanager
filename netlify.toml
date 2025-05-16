@@ -1,0 +1,10 @@
+[build]
+  command     = "npm run build"
+  publish     = "dist"                       # Vite compila en /dist
+
+[functions]
+  directory   = "netlify/functions"          # tus lambdas aquí
+
+[dev]
+  command     = "npm run netlify-dev"
+  framework   = "#custom"
