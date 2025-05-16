@@ -1,0 +1,31 @@
+# 🚫 No incluir dependencias instaladas
+node_modules/
+
+# 🚫 No incluir builds o cachés
+dist/
+.vite/
+.netlify/
+.cache/
+build/
+
+# 🚫 No incluir variables sensibles
+.env
+.env.*
+!.env.example   # (si querés dejar una plantilla de variables)
+
+# 🚫 No incluir logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 🚫 Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# 🚫 Archivos temporales
+*.log
+*.tmp
+*.swp
+
+# 🚫 VSCode config personal (opcional)
+.vscode/
