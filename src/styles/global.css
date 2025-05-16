@@ -1,0 +1,300 @@
+/* 
+  Global CSS Guidelines:
+  - Moderno, minimalista y amigable: uso generoso de espacios y tipografía clara.
+  - Paleta de colores pastel con toques de púrpura para destacar elementos.
+  - Sistema de tarjetas (cards) reutilizables: primarias, secundarias y anidadas.
+  - Variables CSS para colores, tipografías, espaciados y bordes.
+  - Clases utilitarias para flexbox, grid, tipografía y espaciado.
+  - Adaptable y escalable: fácil de extender con nuevos componentes.
+*/
+
+/*──────────────────────────────────────────────────────────────────────────*/
+/*                               PALETA DE COLORES                         */
+/*──────────────────────────────────────────────────────────────────────────*/
+:root {
+    /* Fondos y Superficies */
+    --color-bg: #f9f9fc;
+    /* gris muy claro */
+    --color-surface: #ffffff;
+    /* blanco puro */
+
+    /* Colores principales */
+    --color-primary: #9f7aea;
+    /* púrpura pastel */
+    --color-primary-hover: #805ad5;
+    /* púrpura medio */
+    --color-secondary: #a0aec0;
+    /* gris azulado suave */
+    --color-accent: #b794f4;
+    /* lila claro */
+
+    /* Feedback */
+    --color-success: #48bb78;
+    /* verde pastel */
+    --color-info: #63b3ed;
+    /* azul pastel */
+    --color-warning: #f6ad55;
+    /* naranja suave */
+    --color-danger: #f56565;
+    /* rojo pastel */
+
+    /* Tipografía */
+    --color-text: #2d3748;
+    /* casi negro */
+    --color-text-muted: #718096;
+    /* gris medio */
+
+    /* Espaciados */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+
+    /* Bordes */
+    --border-radius: 0.5rem;
+    --border-radius-lg: 0.75rem;
+
+    /* Tipografías */
+    --font-sans: 'Inter', sans-serif;
+    --font-heading: 'Poppins', sans-serif;
+}
+
+/*──────────────────────────────────────────────────────────────────────────*/
+/*                               RESET & BASE                              */
+/*──────────────────────────────────────────────────────────────────────────*/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+}
+
+body {
+    font-family: var(--font-sans);
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    line-height: 1.6;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-heading);
+    color: var(--color-text);
+    margin-bottom: var(--spacing-md);
+}
+
+a {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--color-primary-hover);
+}
+
+/*──────────────────────────────────────────────────────────────────────────*/
+/*                           CLASES UTILITARIAS                            */
+/*──────────────────────────────────────────────────────────────────────────*/
+/* Layout */
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 var(--spacing-md);
+}
+
+.flex {
+    display: flex;
+}
+
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.grid {
+    display: grid;
+}
+
+.grid-cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-gap-md {
+    gap: var(--spacing-md);
+}
+
+/* Espaciado */
+.p-xs {
+    padding: var(--spacing-xs);
+}
+
+.p-sm {
+    padding: var(--spacing-sm);
+}
+
+.p-md {
+    padding: var(--spacing-md);
+}
+
+.p-lg {
+    padding: var(--spacing-lg);
+}
+
+.m-xs {
+    margin: var(--spacing-xs);
+}
+
+.m-sm {
+    margin: var(--spacing-sm);
+}
+
+.m-md {
+    margin: var(--spacing-md);
+}
+
+.m-lg {
+    margin: var(--spacing-lg);
+}
+
+/* Texto */
+.text-center {
+    text-align: center;
+}
+
+.text-muted {
+    color: var(--color-text-muted);
+}
+
+.text-primary {
+    color: var(--color-primary);
+}
+
+/* Botones */
+.btn {
+    display: inline-block;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--border-radius);
+    font-family: var(--font-sans);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn-primary {
+    background-color: var(--color-primary);
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background-color: var(--color-primary-hover);
+}
+
+.btn-secondary {
+    background-color: var(--color-secondary);
+    color: #fff;
+}
+
+.btn-secondary:hover {
+    background-color: var(--color-text-muted);
+}
+
+/*──────────────────────────────────────────────────────────────────────────*/
+/*                              COMPONENTES                                */
+/*──────────────────────────────────────────────────────────────────────────*/
+/* Card base */
+.card {
+    background-color: var(--color-surface);
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    padding: var(--spacing-md);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Variantes de Card */
+.card-primary {
+    border-left: 4px solid var(--color-primary);
+}
+
+.card-secondary {
+    border-left: 4px solid var(--color-secondary);
+}
+
+.card-accent {
+    border-left: 4px solid var(--color-accent);
+}
+
+/* Card anidada */
+.card-nested {
+    background-color: var(--color-bg);
+    padding: var(--spacing-sm);
+    margin-top: var(--spacing-sm);
+}
+
+/* Formulario */
+.form-group {
+    margin-bottom: var(--spacing-md);
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: var(--spacing-xs);
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: var(--spacing-sm);
+    border: 1px solid #e2e8f0;
+    border-radius: var(--border-radius);
+    font-family: var(--font-sans);
+}
+
+/* Inputs con estado */
+.input-error {
+    border-color: var(--color-danger);
+}
+
+.input-success {
+    border-color: var(--color-success);
+}
+
+/* Listas */
+.list-reset {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Utilities adicionales */
+.hidden {
+    display: none !important;
+}
+
+.visible {
+    display: block !important;
+}
+
+.overflow-auto {
+    overflow: auto;
+}
+
+/*──────────────────────────────────────────────────────────────────────────*/
+/*                          FIN DEL CSS GLOBAL                             */
+/*──────────────────────────────────────────────────────────────────────────*/
