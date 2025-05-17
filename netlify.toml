@@ -1,12 +1,14 @@
+# netlify.toml
+
 [build]
-  command = "npm run build"
-  publish = "dist"
+  command   = "npm run build"
+  publish   = "dist"
 
 [functions]
   directory = "netlify/functions"
 
 [dev]
-  command = "vite"
-  targetPort = 5173
-  port = 8888
+  command    = "npm run dev"   # esto lanza Vite en el 3000
+  targetPort = 3000            # puerto donde tu dev-server responde
+  port       = 8888            # puerto donde Netlify montará front + lambdas
   autoLaunch = true
