@@ -1,27 +1,23 @@
 // netlify/functions/models/Task.js
 
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
+const { Schema, model } = mongoose
 
-const taskSchema = new mongoose.Schema({
-    userId: { type: Number, required: true },
+const TaskSchema = new Schema({
+    userId: { type: String, required: true },
     title: { type: String, required: true },
-    location: { type: String },
-    status: {
-        type: String,
-        enum: ['no comenzada', 'comenzada', 'estancada', 'finalizada'],
-        required: true
-    },
-    completedAt: { type: Date },
-    stalledReason: { type: String },
-    assignedBy: { type: String },
+    status: { type: String, required: true, enum: ['no comenzada', 'comenzada', 'estancada', 'finalizada'] },
     deadline: { type: Date, required: true },
-    recommendedDate: { type: Date },
-    depends: { type: Boolean, default: false },
-    dependsOn: { type: mongoose.Schema.Types.ObjectId, ref: 'Task' },
-    observation: { type: String },
-    details: { type: String },
-    priority: { type: String, enum: ['baja', 'media', 'alta'] },
-    createdAt: { type: Date, default: Date.now }
-}, { timestamps: true });
+    priority: { type: String, enum: ['baja', 'media', 'alta'], default: 'media' },
+    location: String,
+    assignedBy: String,
+    recommendedDate: Date,
+    depends: Boolean,
+    dependsOn: { type: Schema.Types.ObjectId, ref: 'Task' },
+    stalledReason: String,
+    observation: String,
+    details: String,
+    completedAt: Date
+}, { timestamps: true })
 
-module.exports = mongoose.models.Task || mongoose.model('Task', taskSchema);
+module.exports = mongoose.models.Task || model('Task', TaskSchema)

@@ -2,55 +2,70 @@
 
 import { useState, useEffect } from 'react';
 
-export default function TaskForm({ initialData = {}, onSubmit, onCancel }) {
+export default function TaskForm({
+    tasks = [],
+    initialData = {},
+    onSubmit,
+    onCancel
+}) {
     const [task, setTask] = useState({
-        title: '',
-        status: 'no comenzada',
-        deadline: '',
-        priority: 'media',
-        location: '',
-        assignedBy: '',
-        recommendedDate: '',
-        depends: false,
-        dependsOn: '',
-        stalledReason: '',
-        observation: '',
-        details: '',
-        ...initialData
+        title: initialData.title ?? '',
+        status: initialData.status ?? 'no comenzada',
+        deadline: initialData.deadline ?? '',
+        priority: initialData.priority ?? 'media',
+        location: initialData.location ?? '',
+        assignedBy: initialData.assignedBy ?? '',
+        recommendedDate: initialData.recommendedDate ?? '',
+        depends: initialData.depends ?? false,
+        dependsOn: initialData.dependsOn ?? '',
+        stalledReason: initialData.stalledReason ?? '',
+        observation: initialData.observation ?? '',
+        details: initialData.details ?? ''
     });
 
-    // Ver si mostrar campos condicionales
-    const showStalled = task.status === 'estancada';
-    const showDepends = task.depends;
+    const [showStalled, setShowStalled] = useState(false);
+    const [showDepends, setShowDepends] = useState(false);
 
-    const handleChange = e => {
+    useEffect(() => {
+        setShowStalled(task.status === 'estancada');
+        setShowDepends(task.depends);
+    }, [task.status, task.depends]);
+
+    const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
         setTask(prev => ({
             ...prev,
-            [name]: type === 'checkbox' ? checked : value,
-            // Limpia campos no aplicables
-            ...(name === 'status' && value !== 'estancada' ? { stalledReason: '' } : {}),
-            ...(name === 'depends' && !checked ? { dependsOn: '' } : {})
+            [name]: type === 'checkbox' ? checked : value
         }));
     };
 
-    const submit = e => {
+    const submit = (e) => {
         e.preventDefault();
         onSubmit(task);
     };
 
     return (
         <form onSubmit={submit} className="flex flex-col">
-            {/* 1. Título */}
+            {/* 1. Tarea */}
             <div className="form-group">
                 <label>Tarea*</label>
-                <input name="title" value={task.title} onChange={handleChange} required />
+                <input
+                    name="title"
+                    value={task.title}
+                    onChange={handleChange}
+                    required
+                />
             </div>
 
             {/* 2. Estado */}
             <div className="form-group">
                 <label>Estado*</label>
-                <select name="status" value={task.status} onChange={handleChange} required>
+                <select
+                    name="status"
+                    value={task.status}
+                    onChange={handleChange}
+                    required
+                >
                     <option value="no comenzada">No comenzada</option>
                     <option value="comenzada">Comenzada</option>
                     <option value="estancada">Estancada</option>
@@ -58,11 +73,15 @@ export default function TaskForm({ initialData = {}, onSubmit, onCancel }) {
                 </select>
             </div>
 
-            {/* Motivo estancamiento */}
+            {/* 10. Motivo de estancamiento */}
             {showStalled && (
                 <div className="form-group">
                     <label>Motivo de estancamiento</label>
-                    <textarea name="stalledReason" value={task.stalledReason} onChange={handleChange} />
+                    <textarea
+                        name="stalledReason"
+                        value={task.stalledReason}
+                        onChange={handleChange}
+                    />
                 </div>
             )}
 
@@ -81,7 +100,11 @@ export default function TaskForm({ initialData = {}, onSubmit, onCancel }) {
             {/* 4. Prioridad */}
             <div className="form-group">
                 <label>Prioridad</label>
-                <select name="priority" value={task.priority} onChange={handleChange}>
+                <select
+                    name="priority"
+                    value={task.priority}
+                    onChange={handleChange}
+                >
                     <option value="baja">Baja</option>
                     <option value="media">Media</option>
                     <option value="alta">Alta</option>
@@ -91,16 +114,24 @@ export default function TaskForm({ initialData = {}, onSubmit, onCancel }) {
             {/* 5. Lugar */}
             <div className="form-group">
                 <label>Lugar</label>
-                <input name="location" value={task.location} onChange={handleChange} />
+                <input
+                    name="location"
+                    value={task.location}
+                    onChange={handleChange}
+                />
             </div>
 
             {/* 6. Quién asignó */}
             <div className="form-group">
                 <label>Quién asignó</label>
-                <input name="assignedBy" value={task.assignedBy} onChange={handleChange} />
+                <input
+                    name="assignedBy"
+                    value={task.assignedBy}
+                    onChange={handleChange}
+                />
             </div>
 
-            {/* 7. Fecha recomendada */}
+            {/* 7. Fecha recomendada de completación */}
             <div className="form-group">
                 <label>Fecha recomendada de completación</label>
                 <input
@@ -111,7 +142,7 @@ export default function TaskForm({ initialData = {}, onSubmit, onCancel }) {
                 />
             </div>
 
-            {/* 8. Depende */}
+            {/* 8. Depende de otra tarea */}
             <div className="form-group">
                 <label className="flex items-center gap-sm">
                     <span>Depende de otra tarea</span>
@@ -124,33 +155,53 @@ export default function TaskForm({ initialData = {}, onSubmit, onCancel }) {
                 </label>
             </div>
 
+            {/* 9. De qué tarea depende */}
             {showDepends && (
                 <div className="form-group">
                     <label>De qué tarea depende*</label>
-                    <input
+                    <select
                         name="dependsOn"
                         value={task.dependsOn}
                         onChange={handleChange}
                         required
-                    />
+                    >
+                        <option value="">-- Seleccione --</option>
+                        {tasks.map((t) => (
+                            <option key={t._id} value={t._id}>
+                                {t.title}
+                            </option>
+                        ))}
+                    </select>
                 </div>
             )}
 
             {/* 11. Observación */}
             <div className="form-group">
                 <label>Observación</label>
-                <textarea name="observation" value={task.observation} onChange={handleChange} />
+                <textarea
+                    name="observation"
+                    value={task.observation}
+                    onChange={handleChange}
+                />
             </div>
 
-            {/* 12. Detalle */}
+            {/* 12. Detalle de la tarea */}
             <div className="form-group">
-                <label>Detalle</label>
-                <textarea name="details" value={task.details} onChange={handleChange} />
+                <label>Detalle de la tarea</label>
+                <textarea
+                    name="details"
+                    value={task.details}
+                    onChange={handleChange}
+                />
             </div>
 
             {/* Botones */}
             <div className="flex justify-end">
-                <button type="button" className="btn btn-secondary m-sm" onClick={onCancel}>
+                <button
+                    type="button"
+                    className="btn btn-secondary m-sm"
+                    onClick={onCancel}
+                >
                     Cancelar
                 </button>
                 <button type="submit" className="btn btn-primary m-sm">
@@ -160,3 +211,4 @@ export default function TaskForm({ initialData = {}, onSubmit, onCancel }) {
         </form>
     );
 }
+
