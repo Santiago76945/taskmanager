@@ -1,46 +1,54 @@
 // src/components/LoginForm.jsx
-import { useState, useContext } from 'react';
-import { AuthContext } from '../contexts/AuthContext';
+
+import { useState, useContext } from 'react'
+import { AuthContext } from '../contexts/AuthContext'
 
 export default function LoginForm() {
-    const { login, register } = useContext(AuthContext);
-    const [mode, setMode] = useState('login'); // 'login' | 'register'
-    const [form, setForm] = useState({ username: '', password: '', code: '' });
-    const [error, setError] = useState('');
+    const { login, register } = useContext(AuthContext)
+    const [mode, setMode] = useState('login')        // 'login' | 'register'
+    const [form, setForm] = useState({ username: '', password: '', code: '' })
+    const [error, setError] = useState('')
+    const [success, setSuccess] = useState('')
 
     const handleChange = e => {
-        setForm({ ...form, [e.target.name]: e.target.value });
-    };
+        setForm({ ...form, [e.target.name]: e.target.value })
+    }
 
     const handleSubmit = async e => {
-        e.preventDefault();
-        setError('');
+        e.preventDefault()
+        setError('')
+        setSuccess('')
+
         try {
             if (mode === 'login') {
-                await login(form.username, form.password);
+                await login(form.username, form.password)
             } else {
-                await register(form.username, form.password, form.code);
+                await register(form.username, form.password, form.code)
+                setSuccess('Usuario registrado correctamente. Por favor inicia sesión.')
+                setMode('login')
             }
         } catch (err) {
-            setError(err.response?.data?.msg || 'Error del servidor');
+            setError(err.response?.data?.msg || 'Error del servidor')
         }
-    };
+    }
 
     return (
         <div className="flex flex-center" style={{ minHeight: '100vh' }}>
-            <div
-                className="card card-primary"
-                style={{ width: '100%', maxWidth: '400px' }}
-            >
+            <div className="card card-primary" style={{ width: '100%', maxWidth: '400px' }}>
                 <h2 className="text-center m-md">
                     {mode === 'login' ? 'Iniciar sesión' : 'Crear cuenta'}
                 </h2>
 
+                {/* Mensaje de éxito tras registro */}
+                {success && (
+                    <p className="text-center m-sm" style={{ color: 'var(--color-success)' }}>
+                        {success}
+                    </p>
+                )}
+
+                {/* Mensaje de error */}
                 {error && (
-                    <p
-                        className="text-center m-sm"
-                        style={{ color: 'var(--color-danger)' }}
-                    >
+                    <p className="text-center m-sm" style={{ color: 'var(--color-danger)' }}>
                         {error}
                     </p>
                 )}
@@ -96,7 +104,11 @@ export default function LoginForm() {
                 <p
                     className="text-center text-primary m-md"
                     style={{ cursor: 'pointer' }}
-                    onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
+                    onClick={() => {
+                        setError('')
+                        setSuccess('')
+                        setMode(mode === 'login' ? 'register' : 'login')
+                    }}
                 >
                     {mode === 'login'
                         ? '¿No tienes cuenta? Regístrate'
@@ -104,6 +116,6 @@ export default function LoginForm() {
                 </p>
             </div>
         </div>
-    );
+    )
 }
 

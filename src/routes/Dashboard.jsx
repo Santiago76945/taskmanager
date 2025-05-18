@@ -1,13 +1,11 @@
 // src/routes/Dashboard.jsx
 
-import React from 'react';
-import MainMenu from '../components/MainMenu';
+import { Outlet } from 'react-router-dom';
 
 export default function Dashboard() {
     return (
         <div className="container p-lg">
-            <MainMenu />
-            {/* ... */}
+            <Outlet />
         </div>
     );
 }

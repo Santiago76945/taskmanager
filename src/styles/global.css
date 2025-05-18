@@ -294,3 +294,29 @@ a:hover {
 .overflow-auto {
     overflow: auto;
 }
+
+/*──────────────────────────────────────────────────────────────────────────*/
+/*                           CLASES UTILITARIAS                            */
+/*──────────────────────────────────────────────────────────────────────────*/
+
+/* Flexbox extras (añadido) */
+.justify-between {
+    justify-content: space-between;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+/* Flexbox extras */
+.flex-wrap {
+    flex-wrap: wrap;
+}
+
+.gap-sm {
+    gap: var(--spacing-sm);
+}

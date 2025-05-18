@@ -10,22 +10,25 @@ export function AuthProvider({ children }) {
     const [token, setToken] = useState(localStorage.getItem('token'))
     const navigate = useNavigate()
 
+    // Sincroniza token con localStorage
     useEffect(() => {
         if (token) localStorage.setItem('token', token)
         else localStorage.removeItem('token')
     }, [token])
 
-    const login = async (u, p) => {
-        const { data } = await api.login(u, p)
+    // Iniciar sesión
+    const login = async (username, password) => {
+        const { data } = await api.login(username, password)
         setToken(data.token)
         navigate('/dashboard', { replace: true })
     }
 
-    const register = async (u, p, code) => {
-        await api.register(u, p, code)
-        navigate('/', { replace: true })
+    // Registrar usuario (solo hace POST; el componente mostrará el mensaje y cambiará de modo)
+    const register = async (username, password, code) => {
+        await api.register(username, password, code)
     }
 
+    // Cerrar sesión
     const logout = () => {
         setToken(null)
         navigate('/', { replace: true })
