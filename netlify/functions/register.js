@@ -1,5 +1,6 @@
 // netlify/functions/register.js
 
+require('dotenv').config();
 const bcrypt = require('bcrypt');
 const { connectToDB } = require('./dbConnection');
 const User = require('./models/User');

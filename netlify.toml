@@ -11,4 +11,5 @@
   command    = "npm run dev"   # esto lanza Vite en el 3000
   targetPort = 3000            # puerto donde tu dev-server responde
   port       = 8888            # puerto donde Netlify montará front + lambdas
-  autoLaunch = true
+  autoLaunch = false           # ← desactivamos auto-abrir pestaña independiente
+

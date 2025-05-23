@@ -1,5 +1,6 @@
 // netlify/functions/login.js
 
+require('dotenv').config();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { connectToDB } = require('./dbConnection');

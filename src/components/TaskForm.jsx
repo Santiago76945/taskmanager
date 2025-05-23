@@ -4,31 +4,49 @@ import { useState, useEffect } from 'react';
 
 export default function TaskForm({
     tasks = [],
-    initialData = {},
+    initialData,
     onSubmit,
     onCancel
 }) {
+    const initData = initialData || {};
+
     const [task, setTask] = useState({
-        title: initialData.title ?? '',
-        status: initialData.status ?? 'no comenzada',
-        deadline: initialData.deadline ?? '',
-        priority: initialData.priority ?? 'media',
-        location: initialData.location ?? '',
-        assignedBy: initialData.assignedBy ?? '',
-        recommendedDate: initialData.recommendedDate ?? '',
-        depends: initialData.depends ?? false,
-        dependsOn: initialData.dependsOn ?? '',
-        stalledReason: initialData.stalledReason ?? '',
-        observation: initialData.observation ?? '',
-        details: initialData.details ?? ''
+        title: initData.title ?? '',
+        status: initData.status ?? 'no comenzada',
+        deadline: initData.deadline ?? '',
+        priority: initData.priority ?? 'media',
+        location: initData.location ?? '',
+        assignedBy: initData.assignedBy ?? '',
+        recommendedDate: initData.recommendedDate ?? '',
+        creationDate: initData.creationDate ?? '',
+        depends: initData.depends ?? false,
+        dependsOn: initData.dependsOn ?? '',
+        stalledReason: initData.stalledReason ?? '',
+        observation: initData.observation ?? '',
+        details: initData.details ?? '',
+        completionDate: initData.completionDate ?? ''
     });
 
     const [showStalled, setShowStalled] = useState(false);
     const [showDepends, setShowDepends] = useState(false);
+    const [showCompletion, setShowCompletion] = useState(false);
 
     useEffect(() => {
         setShowStalled(task.status === 'estancada');
         setShowDepends(task.depends);
+
+        if (task.status === 'finalizada') {
+            setShowCompletion(true);
+            if (!task.completionDate) {
+                setTask(t => ({
+                    ...t,
+                    completionDate: new Date().toISOString().slice(0, 16)
+                }));
+            }
+        } else {
+            setShowCompletion(false);
+            setTask(t => ({ ...t, completionDate: '' }));
+        }
     }, [task.status, task.depends]);
 
     const handleChange = (e) => {
@@ -73,7 +91,7 @@ export default function TaskForm({
                 </select>
             </div>
 
-            {/* 10. Motivo de estancamiento */}
+            {/* Motivo de estancamiento */}
             {showStalled && (
                 <div className="form-group">
                     <label>Motivo de estancamiento</label>
@@ -142,6 +160,17 @@ export default function TaskForm({
                 />
             </div>
 
+            {/* Fecha de creación */}
+            <div className="form-group">
+                <label>Fecha de creación</label>
+                <input
+                    name="creationDate"
+                    type="datetime-local"
+                    value={task.creationDate}
+                    onChange={handleChange}
+                />
+            </div>
+
             {/* 8. Depende de otra tarea */}
             <div className="form-group">
                 <label className="flex items-center gap-sm">
@@ -195,13 +224,23 @@ export default function TaskForm({
                 />
             </div>
 
+            {/* Fecha de completación */}
+            {showCompletion && (
+                <div className="form-group">
+                    <label>Fecha de completación</label>
+                    <input
+                        name="completionDate"
+                        type="datetime-local"
+                        value={task.completionDate}
+                        onChange={handleChange}
+                        required
+                    />
+                </div>
+            )}
+
             {/* Botones */}
             <div className="flex justify-end">
-                <button
-                    type="button"
-                    className="btn btn-secondary m-sm"
-                    onClick={onCancel}
-                >
+                <button type="button" className="btn btn-secondary m-sm" onClick={onCancel}>
                     Cancelar
                 </button>
                 <button type="submit" className="btn btn-primary m-sm">
@@ -211,4 +250,3 @@ export default function TaskForm({
         </form>
     );
 }
-

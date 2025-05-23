@@ -12,9 +12,11 @@ const TaskSchema = new Schema({
     location: String,
     assignedBy: String,
     recommendedDate: Date,
+    creationDate:   Date,
     depends: Boolean,
     dependsOn: { type: Schema.Types.ObjectId, ref: 'Task' },
     stalledReason: String,
+    completionDate: Date, 
     observation: String,
     details: String,
     completedAt: Date
