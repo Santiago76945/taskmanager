@@ -5,17 +5,22 @@
 /* ---------- Palette: Light Mode (5 colores) ---------- */
 :root {
     /* Fondos y superficies */
-    --color-bg: #f9f9fc;
-    --color-surface: #ffffff;
+    --color-bg: #ffffff;
+    --color-surface: #f7ffae;
 
     /* Colores principales */
-    --color-primary: #9f7aea;
-    --color-secondary: #a0aec0;
+    --color-primary: #000000;
+    --color-secondary: #1482f0;
     --color-accent: #f6ad55;
+
+    /* Color exclusivo para botones del menú principal */
+    --main-menu-btn-bg: #ffffff;
+    --main-menu-btn-hover: #000000;
+    --main-menu-btn-text: #000000;
 
     /* Tipografía */
     --color-text: #2d3748;
-    --color-text-muted: #718096;
+    --color-text-muted: #0a340f;
 
     /* Espaciados */
     --spacing-xs: 0.25rem;
@@ -612,4 +617,18 @@ a:hover {
 /* Aplica margen izquierdo solo a botones que están después de otro */
 .btn+.btn {
     margin-left: var(--spacing-sm);
+}
+
+.main-menu-button {
+    background: var(--main-menu-btn-bg);
+    color: var(--main-menu-btn-text);
+    border: 1px solid var(--main-menu-btn-bg);
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.main-menu-button:hover {
+    background: var(--main-menu-btn-hover);
+    color: var(--main-menu-btn-bg);
+    /* texto negro sobre fondo blanco */
+    border-color: var(--main-menu-btn-hover);
 }

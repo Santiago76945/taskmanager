@@ -86,37 +86,37 @@ export default function MainMenu({ streak = 0 }) {
 
             <nav className="menu">
                 <button
-                    className="action"
+                    className="action main-menu-button"
                     onClick={() => navigate('/dashboard/tasks')}
                 >
                     Mis tareas
                 </button>
                 <button
-                    className="action"
+                    className="action main-menu-button"
                     onClick={() => navigate('/dashboard/import')}
                 >
                     Importar tareas
                 </button>
                 <button
-                    className="action"
+                    className="action main-menu-button"
                     onClick={() => navigate('/dashboard/export')}
                 >
                     Exportar tareas
                 </button>
                 <button
-                    className="action"
+                    className="action main-menu-button"
                     onClick={() => {/* futura funcionalidad Demetria */ }}
                 >
-                    Demetria: Asistente personal AI
+                    Asistente AI Demetria
                 </button>
                 <button
-                    className="action"
+                    className="action main-menu-button"
                     onClick={() => {/* futura funcionalidad Demetrios+ */ }}
                 >
                     Adquirir Demetrios+
                 </button>
                 <button
-                    className="action"
+                    className="action main-menu-button"
                     onClick={() => {/* futura funcionalidad Borrar tareas */ }}
                 >
                     Borrar todas mis tareas
