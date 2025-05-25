@@ -3,8 +3,8 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AuthContext } from '../contexts/AuthContext'
-import '../styles/MainMenu.css'
-import demeterMascot from '../assets/logo.png'
+import '../styles/unified.css'
+import demeterLogo from '../assets/logo.png'
 
 export default function MainMenu({ streak = 0 }) {
     const navigate = useNavigate()
@@ -37,7 +37,7 @@ export default function MainMenu({ streak = 0 }) {
             <header className="header">
                 <img
                     className="mascot"
-                    src={demeterMascot}
+                    src={demeterLogo}
                     alt="Deméter regando la cosecha"
                 />
                 <div className="title-container">
@@ -107,7 +107,7 @@ export default function MainMenu({ streak = 0 }) {
                     className="action"
                     onClick={() => {/* futura funcionalidad Demetria */ }}
                 >
-                    Demetria: Asistente personal
+                    Demetria: Asistente personal AI
                 </button>
                 <button
                     className="action"

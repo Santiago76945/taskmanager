@@ -14,7 +14,7 @@ export default function TaskList() {
     const [selected, setSelected] = useState(null)
     const [showForm, setShowForm] = useState(false)
 
-    // Filtros
+    // filtros
     const [showCompleted, setShowCompleted] = useState(false)
     const [priorityFilter, setPriorityFilter] = useState('all')
 
@@ -37,13 +37,11 @@ export default function TaskList() {
         setShowForm(true)
     }
 
-    // Vista detallada
     const openView = (task) => {
         setSelected(task)
         setShowForm(false)
     }
 
-    // Editar desde la vista
     const openEdit = () => {
         setShowForm(true)
     }
@@ -90,12 +88,11 @@ export default function TaskList() {
         }
     }
 
-    // Handlers de filtros
-    const handleStatusFilterChange = (e) => setShowCompleted(e.target.value === 'completed')
+    const handleStatusFilterChange = (e) =>
+        setShowCompleted(e.target.value === 'completed')
     const handlePriorityChange = (e) => setPriorityFilter(e.target.value)
 
-    // Aplicar filtros antes de renderizar
-    const filteredTasks = tasks.filter(t => {
+    const filteredTasks = tasks.filter((t) => {
         if (showCompleted) {
             if (t.status !== 'finalizada') return false
         } else {
@@ -108,26 +105,26 @@ export default function TaskList() {
     })
 
     return (
-        <div className="container p-lg">
-            <div className="flex justify-between items-center m-md">
-                <h2>Tus tareas</h2>
+        <div className="main-menu-card p-lg">
+            {/* Título */}
+            <div className="flex justify-between items-center p-md">
+                <h2 className="title">Tus tareas</h2>
             </div>
 
-            {/* Barra de filtros */}
+            {/* Filtros */}
             <div className="task-filters">
-                <div className="flex items-center gap-sm">
-                    <label className="font-medium mr-2">Estado:</label>
+                <div className="form-group flex items-center gap-sm">
+                    <label>Estado:</label>
                     <select
                         value={showCompleted ? 'completed' : 'pending'}
                         onChange={handleStatusFilterChange}
-                        className="border rounded px-2 py-1"
                     >
                         <option value="pending">Pendientes</option>
                         <option value="completed">Completadas</option>
                     </select>
                 </div>
 
-                <div className="flex items-center gap-xs">
+                <div className="form-group flex items-center gap-sm">
                     <label>Prioridad:</label>
                     <select value={priorityFilter} onChange={handlePriorityChange}>
                         <option value="all">Todas</option>
@@ -138,20 +135,20 @@ export default function TaskList() {
                 </div>
             </div>
 
-            {/* Botones de acción */}
-            <div className="flex items-center gap-sm mb-md">
+            {/* Acciones */}
+            <div className="flex items-center gap-sm m-md">
                 <button
-                    className="btn btn-secondary m-sm"
+                    className="btn btn-secondary"
                     onClick={() => navigate('/dashboard')}
                 >
                     Volver al menú
                 </button>
-                <button className="btn btn-primary m-sm" onClick={openCreate}>
+                <button className="btn btn-primary" onClick={openCreate}>
                     Crear tarea
                 </button>
             </div>
 
-            {/* Lista de tareas filtradas */}
+            {/* Lista de tareas */}
             <ul className="list-reset">
                 {filteredTasks.map((t) => (
                     <li key={t._id}>
@@ -160,7 +157,9 @@ export default function TaskList() {
                             onClick={() => openView(t)}
                         >
                             <span>{t.title}</span>
-                            <span>Deadline: {new Date(t.deadline).toLocaleString()}</span>
+                            <span>
+                                Deadline: {new Date(t.deadline).toLocaleString()}
+                            </span>
                             <span>{t.status}</span>
                         </div>
                     </li>
@@ -171,16 +170,33 @@ export default function TaskList() {
             <Popup
                 isOpen={!!(selected && !showForm)}
                 onClose={() => setSelected(null)}
-                title="Vista detallada de tu tarea"
+                title="Detalle de tarea"
             >
                 {selected && (
                     <>
-                        <p><strong>Tarea:</strong> {selected.title}</p>
-                        <p><strong>Estado:</strong> {selected.status}</p>
-                        <p><strong>Deadline:</strong> {new Date(selected.deadline).toLocaleString()}</p>
-                        <p><strong>Prioridad:</strong> {selected.priority}</p>
-                        {selected.location && <p><strong>Lugar:</strong> {selected.location}</p>}
-                        {selected.assignedBy && <p><strong>Quién asignó:</strong> {selected.assignedBy}</p>}
+                        <p>
+                            <strong>Tarea:</strong> {selected.title}
+                        </p>
+                        <p>
+                            <strong>Estado:</strong> {selected.status}
+                        </p>
+                        <p>
+                            <strong>Deadline:</strong>{' '}
+                            {new Date(selected.deadline).toLocaleString()}
+                        </p>
+                        <p>
+                            <strong>Prioridad:</strong> {selected.priority}
+                        </p>
+                        {selected.location && (
+                            <p>
+                                <strong>Lugar:</strong> {selected.location}
+                            </p>
+                        )}
+                        {selected.assignedBy && (
+                            <p>
+                                <strong>Quién asignó:</strong> {selected.assignedBy}
+                            </p>
+                        )}
                         {selected.recommendedDate && (
                             <p>
                                 <strong>Fecha recomendada:</strong>{' '}
@@ -188,28 +204,44 @@ export default function TaskList() {
                             </p>
                         )}
                         {selected.depends && selected.dependsOn && (
-                            <p><strong>Depende de tarea ID:</strong> {selected.dependsOn}</p>
+                            <p>
+                                <strong>Depende de tarea ID:</strong> {selected.dependsOn}
+                            </p>
                         )}
                         {selected.stalledReason && (
-                            <p><strong>Motivo estancamiento:</strong> {selected.stalledReason}</p>
+                            <p>
+                                <strong>Motivo estancamiento:</strong>{' '}
+                                {selected.stalledReason}
+                            </p>
                         )}
-                        {selected.observation && <p><strong>Observación:</strong> {selected.observation}</p>}
-                        {selected.details && <p><strong>Detalle:</strong> {selected.details}</p>}
+                        {selected.observation && (
+                            <p>
+                                <strong>Observación:</strong> {selected.observation}
+                            </p>
+                        )}
+                        {selected.details && (
+                            <p>
+                                <strong>Detalle:</strong> {selected.details}
+                            </p>
+                        )}
 
-                        <div className="flex justify-end mt-sm">
+                        <div className="flex justify-end m-sm">
                             {selected.status !== 'finalizada' && (
                                 <button
-                                    className="btn btn-success m-sm"
+                                    className="btn btn-success"
                                     onClick={handleComplete}
                                 >
-                                    ✅ Marcar como completada
+                                    ✅ Completada
                                 </button>
                             )}
-                            <button className="btn btn-secondary m-sm" onClick={openEdit}>
+                            <button
+                                className="btn btn-secondary"
+                                onClick={openEdit}
+                            >
                                 Editar
                             </button>
                             <button
-                                className="btn btn-danger m-sm"
+                                className="btn btn-danger"
                                 onClick={() => handleDelete(selected._id)}
                             >
                                 Eliminar
@@ -219,7 +251,7 @@ export default function TaskList() {
                 )}
             </Popup>
 
-            {/* Formulario Crear/Editar */}
+            {/* Crear/Editar formulario */}
             <Popup
                 isOpen={showForm}
                 onClose={() => {
