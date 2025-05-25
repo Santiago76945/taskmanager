@@ -14,6 +14,10 @@ export default function TaskList() {
     const [selected, setSelected] = useState(null)
     const [showForm, setShowForm] = useState(false)
 
+    // Filtros
+    const [showCompleted, setShowCompleted] = useState(false)
+    const [priorityFilter, setPriorityFilter] = useState('all')
+
     const fetchTasks = async () => {
         if (!token) return
         try {
@@ -33,13 +37,13 @@ export default function TaskList() {
         setShowForm(true)
     }
 
-    // mostrar detalles
+    // Vista detallada
     const openView = (task) => {
         setSelected(task)
         setShowForm(false)
     }
 
-    // editar desde vista
+    // Editar desde la vista
     const openEdit = () => {
         setShowForm(true)
     }
@@ -55,6 +59,17 @@ export default function TaskList() {
         }
     }
 
+    const handleComplete = async () => {
+        if (!token || !selected) return
+        try {
+            await api.updateTask(token, selected._id, { status: 'finalizada' })
+            setSelected(null)
+            fetchTasks()
+        } catch (err) {
+            console.error('Error marking complete:', err)
+        }
+    }
+
     const handleSubmit = async (formData) => {
         if (!token) return
         const payload = { ...formData }
@@ -62,7 +77,7 @@ export default function TaskList() {
             delete payload.dependsOn
         }
         try {
-            if (selected) {
+            if (selected && showForm) {
                 await api.updateTask(token, selected._id, payload)
             } else {
                 await api.createTask(token, payload)
@@ -75,38 +90,84 @@ export default function TaskList() {
         }
     }
 
+    // Handlers de filtros
+    const handleStatusFilterChange = (e) => setShowCompleted(e.target.value === 'completed')
+    const handlePriorityChange = (e) => setPriorityFilter(e.target.value)
+
+    // Aplicar filtros antes de renderizar
+    const filteredTasks = tasks.filter(t => {
+        if (showCompleted) {
+            if (t.status !== 'finalizada') return false
+        } else {
+            if (t.status === 'finalizada') return false
+        }
+        if (priorityFilter !== 'all' && t.priority !== priorityFilter) {
+            return false
+        }
+        return true
+    })
+
     return (
         <div className="container p-lg">
             <div className="flex justify-between items-center m-md">
                 <h2>Tus tareas</h2>
-                <div>
-                    <button
-                        className="btn btn-secondary m-sm"
-                        onClick={() => navigate('/dashboard')}
+            </div>
+
+            {/* Barra de filtros */}
+            <div className="task-filters">
+                <div className="flex items-center gap-sm">
+                    <label className="font-medium mr-2">Estado:</label>
+                    <select
+                        value={showCompleted ? 'completed' : 'pending'}
+                        onChange={handleStatusFilterChange}
+                        className="border rounded px-2 py-1"
                     >
-                        Volver al menú
-                    </button>
-                    <button className="btn btn-primary m-sm" onClick={openCreate}>
-                        Crear tarea
-                    </button>
+                        <option value="pending">Pendientes</option>
+                        <option value="completed">Completadas</option>
+                    </select>
+                </div>
+
+                <div className="flex items-center gap-xs">
+                    <label>Prioridad:</label>
+                    <select value={priorityFilter} onChange={handlePriorityChange}>
+                        <option value="all">Todas</option>
+                        <option value="baja">Baja</option>
+                        <option value="media">Media</option>
+                        <option value="alta">Alta</option>
+                    </select>
                 </div>
             </div>
 
+            {/* Botones de acción */}
+            <div className="flex items-center gap-sm mb-md">
+                <button
+                    className="btn btn-secondary m-sm"
+                    onClick={() => navigate('/dashboard')}
+                >
+                    Volver al menú
+                </button>
+                <button className="btn btn-primary m-sm" onClick={openCreate}>
+                    Crear tarea
+                </button>
+            </div>
+
+            {/* Lista de tareas filtradas */}
             <ul className="list-reset">
-                {tasks.map((t) => (
+                {filteredTasks.map((t) => (
                     <li key={t._id}>
                         <div
                             className="card card-secondary p-md flex justify-between items-center m-sm"
                             onClick={() => openView(t)}
                         >
                             <span>{t.title}</span>
-                            <span>{new Date(t.deadline).toLocaleString()}</span>
+                            <span>Deadline: {new Date(t.deadline).toLocaleString()}</span>
+                            <span>{t.status}</span>
                         </div>
                     </li>
                 ))}
             </ul>
 
-            {/* Vista detallada de la tarea */}
+            {/* Vista detallada */}
             <Popup
                 isOpen={!!(selected && !showForm)}
                 onClose={() => setSelected(null)}
@@ -136,6 +197,14 @@ export default function TaskList() {
                         {selected.details && <p><strong>Detalle:</strong> {selected.details}</p>}
 
                         <div className="flex justify-end mt-sm">
+                            {selected.status !== 'finalizada' && (
+                                <button
+                                    className="btn btn-success m-sm"
+                                    onClick={handleComplete}
+                                >
+                                    ✅ Marcar como completada
+                                </button>
+                            )}
                             <button className="btn btn-secondary m-sm" onClick={openEdit}>
                                 Editar
                             </button>

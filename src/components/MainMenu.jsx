@@ -7,12 +7,17 @@ import TaskCard from './TaskCard'
 export default function MainMenu() {
     const { logout } = useContext(AuthContext)
 
+    const handleLogout = () => {
+        localStorage.removeItem('token')
+        logout()
+    }
+
     return (
         <div className="m-lg">
             <div className="flex justify-between items-center m-md">
                 <h1 className="text-center text-primary m-md">Task Manager</h1>
                 <button
-                    onClick={logout}
+                    onClick={handleLogout}
                     className="btn btn-secondary"
                 >
                     Cerrar sesión
