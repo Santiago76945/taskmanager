@@ -1,33 +1,127 @@
 // src/components/MainMenu.jsx
 
-import { useContext } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { AuthContext } from '../contexts/AuthContext'
-import TaskCard from './TaskCard'
+import '../styles/MainMenu.css'
+import demeterMascot from '../assets/logo.png'
 
-export default function MainMenu() {
+export default function MainMenu({ streak = 0 }) {
+    const navigate = useNavigate()
     const { logout } = useContext(AuthContext)
 
-    const handleLogout = () => {
-        localStorage.removeItem('token')
-        logout()
-    }
+    const [darkMode, setDarkMode] = useState(false)
+
+    useEffect(() => {
+        const saved = localStorage.getItem('theme')
+        if (saved === 'dark' || saved === 'light') {
+            setDarkMode(saved === 'dark')
+        } else {
+            setDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches)
+        }
+    }, [])
+
+    useEffect(() => {
+        const root = document.documentElement
+        if (darkMode) {
+            root.classList.add('dark')
+            localStorage.setItem('theme', 'dark')
+        } else {
+            root.classList.remove('dark')
+            localStorage.setItem('theme', 'light')
+        }
+    }, [darkMode])
 
     return (
-        <div className="m-lg">
-            <div className="flex justify-between items-center m-md">
-                <h1 className="text-center text-primary m-md">Task Manager</h1>
+        <main className="main-menu-card">
+            <header className="header">
+                <img
+                    className="mascot"
+                    src={demeterMascot}
+                    alt="Deméter regando la cosecha"
+                />
+                <div className="title-container">
+                    <h1 className="title">Demetrios</h1>
+                    <p className="subtitle">The Ritual of Getting Things Done</p>
+                </div>
+
+                <label className="theme-switch">
+                    {darkMode ? '🌙' : '☀️'}
+                    <input
+                        type="checkbox"
+                        checked={darkMode}
+                        onChange={() => setDarkMode(prev => !prev)}
+                        aria-label="Alternar modo claro/oscuro"
+                    />
+                    <span className="slider" />
+                </label>
+
                 <button
-                    onClick={handleLogout}
-                    className="btn btn-secondary"
+                    className="logout-btn"
+                    aria-label="Cerrar sesión"
+                    onClick={logout}
                 >
-                    Cerrar sesión
+                    ⏻
                 </button>
-            </div>
-            <div className="grid grid-cols-2 grid-gap-md">
-                <TaskCard title="Mis tareas" to="/dashboard/tasks" />
-                <TaskCard title="Importar tareas" to="/dashboard/import" />
-                <TaskCard title="Exportar tareas" to="/dashboard/export" />
-            </div>
-        </div>
+            </header>
+
+            <section className="stats">
+                <div className="stat">
+                    <span className="stat-label">Racha</span>
+                    <span className="stat-value">🔥 {streak}</span>
+                </div>
+                <div className="stat">
+                    <span className="stat-label">Esta semana</span>
+                    <span className="stat-value">📅 8</span>
+                </div>
+                <div className="stat">
+                    <span className="stat-label">Alta prioridad</span>
+                    <span className="stat-value">⚡️ 5</span>
+                </div>
+                <div className="stat">
+                    <span className="stat-label">Atrasadas</span>
+                    <span className="stat-value">⏳ 2</span>
+                </div>
+            </section>
+
+            <nav className="menu">
+                <button
+                    className="action"
+                    onClick={() => navigate('/dashboard/tasks')}
+                >
+                    Mis tareas
+                </button>
+                <button
+                    className="action"
+                    onClick={() => navigate('/dashboard/import')}
+                >
+                    Importar tareas
+                </button>
+                <button
+                    className="action"
+                    onClick={() => navigate('/dashboard/export')}
+                >
+                    Exportar tareas
+                </button>
+                <button
+                    className="action"
+                    onClick={() => {/* futura funcionalidad Demetria */ }}
+                >
+                    Demetria: Asistente personal
+                </button>
+                <button
+                    className="action"
+                    onClick={() => {/* futura funcionalidad Demetrios+ */ }}
+                >
+                    Adquirir Demetrios+
+                </button>
+                <button
+                    className="action"
+                    onClick={() => {/* futura funcionalidad Borrar tareas */ }}
+                >
+                    Borrar todas mis tareas
+                </button>
+            </nav>
+        </main>
     )
 }
