@@ -1,11 +1,18 @@
 // netlify/functions/models/User.js
 
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
+const { Schema, model } = mongoose
 
-const userSchema = new mongoose.Schema({
-    userId: { type: Number, unique: true, required: true },
-    username: { type: String, unique: true, required: true },
-    password: { type: String, required: true },
-}, { timestamps: true });
+const UserSchema = new Schema({
+    username: { type: String, required: true, unique: true },
+    passwordHash: { type: String, required: true },
+    // código interno para registro
+    code: String,
 
-module.exports = mongoose.models.User || mongoose.model('User', userSchema);
+    // → Nuevos campos para streak
+    streak: { type: Number, default: 0 },
+    lastUpdated: Date
+}, { timestamps: true })
+
+module.exports = mongoose.models.User || model('User', UserSchema)
+

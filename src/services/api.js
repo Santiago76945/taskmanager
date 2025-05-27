@@ -21,6 +21,19 @@ apiClient.interceptors.request.use(config => {
     return config
 })
 
+// Interceptor para manejar respuestas 401/403 y forzar logout
+apiClient.interceptors.response.use(
+    response => response,
+    error => {
+        const status = error.response?.status
+        if (status === 401 || status === 403) {
+            localStorage.removeItem('token')
+            window.location.href = '/'
+        }
+        return Promise.reject(error)
+    }
+)
+
 // Auth
 export const login = (u, p) =>
     apiClient.post('/login', { username: u, password: p })
@@ -40,3 +53,10 @@ export const updateTask = (_, id, data) =>
 
 export const deleteTask = (_, id) =>
     apiClient.delete('/tasks', { params: { id } })
+
+// Streak endpoints
+export const getStreak = () =>
+    apiClient.get('/streak')
+
+export const updateStreak = ({ reset }) =>
+    apiClient.post('/streak', { reset })
