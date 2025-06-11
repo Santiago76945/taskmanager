@@ -13,6 +13,9 @@ export default function ExportTasks() {
 
     const [tasks, setTasks] = useState([])
     const [filterType, setFilterType] = useState('pending') // 'pending' | 'completed' | 'all'
+    const [priorityFilter, setPriorityFilter] = useState('all')
+    const [tagFilter, setTagFilter] = useState('all')
+    const [availableTags, setAvailableTags] = useState([])
     const [format, setFormat] = useState('json') // 'json' | 'txt'
     const [helpOpen, setHelpOpen] = useState(false)
     const [resultOpen, setResultOpen] = useState(false)
@@ -22,8 +25,11 @@ export default function ExportTasks() {
         async function load() {
             if (!token) return
             try {
-                const { data } = await api.getTasks(token)
+                const { data } = await api.getTasks()
                 setTasks(data)
+                // Build unique tag list (exclude empty)
+                const tags = Array.from(new Set(data.filter(t => t.tag).map(t => t.tag)))
+                setAvailableTags(tags)
             } catch (err) {
                 console.error('Error fetching tasks for export:', err)
             }
@@ -33,11 +39,17 @@ export default function ExportTasks() {
 
     const handleExport = () => {
         let selected = tasks.filter(t => {
-            if (filterType === 'pending') return t.status !== 'finalizada'
-            if (filterType === 'completed') return t.status === 'finalizada'
+            // status filter
+            if (filterType === 'pending' && t.status === 'finalizada') return false
+            if (filterType === 'completed' && t.status !== 'finalizada') return false
+            // priority filter
+            if (priorityFilter !== 'all' && t.priority !== priorityFilter) return false
+            // tag filter
+            if (tagFilter !== 'all' && t.tag !== tagFilter) return false
             return true
         })
 
+        // sort
         selected.sort((a, b) => {
             if (filterType === 'completed') {
                 return new Date(a.completionDate || 0) - new Date(b.completionDate || 0)
@@ -46,6 +58,7 @@ export default function ExportTasks() {
             }
         })
 
+        // format
         let output = ''
         if (format === 'json') {
             output = JSON.stringify(selected, null, 2)
@@ -53,12 +66,18 @@ export default function ExportTasks() {
             output = selected
                 .map(t => {
                     const parts = [
-                        `Título: ${t.title} `,
-                        `Estado: ${t.status} `,
-                        `Deadline: ${new Date(t.deadline).toLocaleString()} `
+                        `Título: ${t.title}`,
+                        `Estado: ${t.status}`,
+                        `Deadline: ${new Date(t.deadline).toLocaleString()}`
                     ]
                     if (t.status === 'finalizada') {
-                        parts.push(`Completada: ${new Date(t.completionDate).toLocaleString()} `)
+                        parts.push(`Completada: ${new Date(t.completionDate).toLocaleString()}`)
+                    }
+                    if (t.priority) {
+                        parts.push(`Prioridad: ${t.priority}`)
+                    }
+                    if (t.tag) {
+                        parts.push(`Tag: ${t.tag}`)
                     }
                     return parts.join(' | ')
                 })
@@ -74,10 +93,7 @@ export default function ExportTasks() {
             {/* Header */}
             <div className="flex justify-between items-center p-md">
                 <h2 className="title">Exportar tareas</h2>
-                <button
-                    className="btn btn-secondary"
-                    onClick={() => setHelpOpen(true)}
-                >
+                <button className="btn btn-secondary" onClick={() => setHelpOpen(true)}>
                     ❔
                 </button>
             </div>
@@ -85,23 +101,36 @@ export default function ExportTasks() {
             {/* Filtros */}
             <div className="form-group">
                 <label>Mostrar:</label>
-                <select
-                    value={filterType}
-                    onChange={e => setFilterType(e.target.value)}
-                >
+                <select value={filterType} onChange={e => setFilterType(e.target.value)}>
                     <option value="pending">Tareas pendientes</option>
                     <option value="completed">Tareas completadas</option>
                     <option value="all">Todas las tareas</option>
                 </select>
             </div>
 
-            {/* Formato */}
             <div className="form-group">
-                <label>Formato de exportación:</label>
-                <select
-                    value={format}
-                    onChange={e => setFormat(e.target.value)}
-                >
+                <label>Prioridad:</label>
+                <select value={priorityFilter} onChange={e => setPriorityFilter(e.target.value)}>
+                    <option value="all">Todas</option>
+                    <option value="baja">Baja</option>
+                    <option value="media">Media</option>
+                    <option value="alta">Alta</option>
+                </select>
+            </div>
+
+            <div className="form-group">
+                <label>Tag:</label>
+                <select value={tagFilter} onChange={e => setTagFilter(e.target.value)}>
+                    <option value="all">Todos</option>
+                    {availableTags.map(tag => (
+                        <option key={tag} value={tag}>{tag}</option>
+                    ))}
+                </select>
+            </div>
+
+            <div className="form-group">
+                <label>Formato:</label>
+                <select value={format} onChange={e => setFormat(e.target.value)}>
                     <option value="json">JSON</option>
                     <option value="txt">TXT</option>
                 </select>
@@ -109,10 +138,7 @@ export default function ExportTasks() {
 
             {/* Actions */}
             <div className="flex justify-end gap-sm mt-md">
-                <button
-                    className="btn btn-secondary"
-                    onClick={() => navigate('/dashboard')}
-                >
+                <button className="btn btn-secondary" onClick={() => navigate('/dashboard')}>
                     Volver al menú
                 </button>
                 <button className="btn btn-primary" onClick={handleExport}>
@@ -120,45 +146,26 @@ export default function ExportTasks() {
                 </button>
             </div>
 
-            {/* Ayuda */}
-            <Popup
-                isOpen={helpOpen}
-                onClose={() => setHelpOpen(false)}
-                title="Cómo exportar tareas"
-            >
-                <p>Selecciona qué tareas quieres exportar y en qué formato:</p>
+            {/* Help Popup */}
+            <Popup isOpen={helpOpen} onClose={() => setHelpOpen(false)} title="Cómo exportar tareas">
+                <p>Elige filtros y formato. Se incluyen estos campos:</p>
                 <ul className="ml-md list-disc">
-                    <li><strong>Tareas pendientes:</strong> todas salvo las finalizadas.</li>
-                    <li><strong>Tareas completadas:</strong> solo las finalizadas.</li>
-                    <li><strong>Todas las tareas:</strong> incluidas completas y pendientes.</li>
-                    <li><strong>Formato JSON:</strong> un array de objetos con todos los campos.</li>
-                    <li><strong>Formato TXT:</strong> cada tarea en una línea con campos separados por “|”.</li>
-                    <li>En el popup de resultado podrás copiar al portapapeles.</li>
+                    <li>title, status, deadline</li>
+                    <li>priority</li>
+                    <li>tag</li>
+                    <li>…y completionDate si aplica</li>
                 </ul>
             </Popup>
 
-            {/* Resultado */}
-            <Popup
-                isOpen={resultOpen}
-                onClose={() => setResultOpen(false)}
-                title="Resultado de exportación"
-            >
+            {/* Result Popup */}
+            <Popup isOpen={resultOpen} onClose={() => setResultOpen(false)} title="Resultado de exportación">
                 <div className="flex justify-end mb-sm">
-                    <button
-                        className="btn btn-secondary copy-button"
-                        onClick={() => copyText(resultText)}
-                    >
+                    <button className="btn btn-secondary copy-button" onClick={() => copyText(resultText)}>
                         📄 Copiar
                     </button>
                 </div>
-                <textarea
-                    readOnly
-                    className="import-textarea"
-                    rows="12"
-                    value={resultText}
-                />
+                <textarea readOnly className="export-textarea" rows="12" value={resultText} />
             </Popup>
         </div>
     )
 }
-

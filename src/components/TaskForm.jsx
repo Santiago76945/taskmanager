@@ -24,12 +24,15 @@ export default function TaskForm({
         stalledReason: initData.stalledReason ?? '',
         observation: initData.observation ?? '',
         details: initData.details ?? '',
-        completionDate: initData.completionDate ?? ''
+        completionDate: initData.completionDate ?? '',
+        tag: initData.tag ?? '',
+        customTag: initData.customTag ?? ''
     });
 
     const [showStalled, setShowStalled] = useState(false);
     const [showDepends, setShowDepends] = useState(false);
     const [showCompletion, setShowCompletion] = useState(false);
+    const [showCustomTag, setShowCustomTag] = useState(false);
 
     useEffect(() => {
         setShowStalled(task.status === 'estancada');
@@ -47,7 +50,9 @@ export default function TaskForm({
             setShowCompletion(false);
             setTask(t => ({ ...t, completionDate: '' }));
         }
-    }, [task.status, task.depends]);
+
+        setShowCustomTag(task.tag === 'personalizado');
+    }, [task.status, task.depends, task.tag]);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -59,7 +64,17 @@ export default function TaskForm({
 
     const submit = (e) => {
         e.preventDefault();
-        onSubmit(task);
+        const payload = { ...task };
+        if (!payload.depends || !payload.dependsOn) {
+            delete payload.dependsOn;
+        }
+        if (payload.tag !== 'personalizado') {
+            delete payload.customTag;
+        } else {
+            payload.tag = payload.customTag;
+            delete payload.customTag;
+        }
+        onSubmit(payload);
     };
 
     return (
@@ -196,11 +211,39 @@ export default function TaskForm({
                     >
                         <option value="">-- Seleccione --</option>
                         {tasks.map((t) => (
-                            <option key={t._id} value={t._id}>
+                            <option key={t._id} value={t._
+                            }>
                                 {t.title}
                             </option>
                         ))}
                     </select>
+                </div>
+            )}
+
+            {/* 10. Tag */}
+            <div className="form-group">
+                <label>Tag</label>
+                <select
+                    name="tag"
+                    value={task.tag}
+                    onChange={handleChange}
+                >
+                    <option value="">-- Ninguno --</option>
+                    <option value="laboral">Laboral</option>
+                    <option value="personal">Personal</option>
+                    <option value="personalizado">Personalizado</option>
+                </select>
+            </div>
+
+            {/* Tag personalizado */}
+            {showCustomTag && (
+                <div className="form-group">
+                    <label>Tag personalizado</label>
+                    <input
+                        name="customTag"
+                        value={task.customTag}
+                        onChange={handleChange}
+                    />
                 </div>
             )}
 
@@ -240,10 +283,17 @@ export default function TaskForm({
 
             {/* Botones */}
             <div className="flex justify-end">
-                <button type="button" className="btn btn-secondary m-sm" onClick={onCancel}>
+                <button
+                    type="button"
+                    className="btn btn-secondary m-sm"
+                    onClick={onCancel}
+                >
                     Cancelar
                 </button>
-                <button type="submit" className="btn btn-primary m-sm">
+                <button
+                    type="submit"
+                    className="btn btn-primary m-sm"
+                >
                     Guardar
                 </button>
             </div>

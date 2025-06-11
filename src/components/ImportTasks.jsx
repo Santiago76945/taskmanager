@@ -49,7 +49,7 @@ export default function ImportTasks() {
                 continue
             }
             try {
-                await api.createTask(token, task)
+                await api.createTask(task)
                 successCount.push(i)
             } catch (err) {
                 errorList.push(
@@ -164,12 +164,16 @@ export default function ImportTasks() {
                         <em>media</em> · <em>alta</em>
                     </li>
                     <li>
+                        <code>tag</code> (string, opcional): p.ej. <em>personal</em> ·{' '}
+                        <em>laboral</em> · <em>otro</em>
+                    </li>
+                    <li>
                         <code>location</code>, <code>assignedBy</code>,{' '}
                         <code>recommendedDate</code>, <code>creationDate</code> (opcionales)
                     </li>
                     <li>
-                        <code>depends</code> (boolean) y <code>dependsOn</code> (id) si{' '}
-                        <code>depends: true</code>
+                        <code>depends</code> (boolean) y <code>dependsOn</code> (id)
+                        si <code>depends: true</code>
                     </li>
                     <li>
                         <code>stalledReason</code> si <code>status: "estancada"</code>
@@ -188,14 +192,15 @@ export default function ImportTasks() {
   "title": "Preparar informe",
   "status": "no comenzada",
   "deadline": "2025-06-01T18:00:00Z",
-  "priority": "alta"
+  "priority": "alta",
+  "tag": "laboral"
 }`}
                 </pre>
                 <p>Ejemplo múltiples tareas:</p>
                 <pre className="card-nested">
                     {`[
-  { "title": "Pagar impuestos", "status": "nueva", "deadline": "2025-05-28T12:00:00Z" },
-  { "title": "Enviar CV", "status": "comenzada", "deadline": "2025-05-30T09:00:00Z", "priority": "media" }
+  { "title": "Pagar impuestos", "status": "nueva", "deadline": "2025-05-28T12:00:00Z", "tag": "personal" },
+  { "title": "Enviar CV", "status": "comenzada", "deadline": "2025-05-30T09:00:00Z", "priority": "media", "tag": "otro" }
 ]`}
                 </pre>
             </Popup>

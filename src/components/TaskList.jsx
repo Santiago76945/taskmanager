@@ -17,12 +17,19 @@ export default function TaskList() {
     // filtros
     const [showCompleted, setShowCompleted] = useState(false)
     const [priorityFilter, setPriorityFilter] = useState('all')
+    const [tagFilter, setTagFilter] = useState('all')
+    const [availableTags, setAvailableTags] = useState([])
 
     const fetchTasks = async () => {
         if (!token) return
         try {
-            const { data } = await api.getTasks(token)
+            const { data } = await api.getTasks()
             setTasks(data)
+            // construir lista de tags únicas
+            const tags = Array.from(
+                new Set(data.filter(t => t.tag).map(t => t.tag))
+            )
+            setAvailableTags(tags)
         } catch (err) {
             console.error('Error fetching tasks:', err)
         }
@@ -49,7 +56,7 @@ export default function TaskList() {
     const handleDelete = async (id) => {
         if (!token) return
         try {
-            await api.deleteTask(token, id)
+            await api.deleteTask(id)
             setSelected(null)
             fetchTasks()
         } catch (err) {
@@ -60,7 +67,7 @@ export default function TaskList() {
     const handleComplete = async () => {
         if (!token || !selected) return
         try {
-            await api.updateTask(token, selected._id, { status: 'finalizada' })
+            await api.updateTask(selected._id, { status: 'finalizada' })
             setSelected(null)
             fetchTasks()
         } catch (err) {
@@ -76,9 +83,9 @@ export default function TaskList() {
         }
         try {
             if (selected && showForm) {
-                await api.updateTask(token, selected._id, payload)
+                await api.updateTask(selected._id, payload)
             } else {
-                await api.createTask(token, payload)
+                await api.createTask(payload)
             }
             setShowForm(false)
             setSelected(null)
@@ -90,16 +97,25 @@ export default function TaskList() {
 
     const handleStatusFilterChange = (e) =>
         setShowCompleted(e.target.value === 'completed')
-    const handlePriorityChange = (e) => setPriorityFilter(e.target.value)
+    const handlePriorityChange = (e) =>
+        setPriorityFilter(e.target.value)
+    const handleTagChange = (e) =>
+        setTagFilter(e.target.value)
 
     const filteredTasks = tasks.filter((t) => {
+        // estado
         if (showCompleted) {
             if (t.status !== 'finalizada') return false
         } else {
             if (t.status === 'finalizada') return false
         }
+        // prioridad
         if (priorityFilter !== 'all' && t.priority !== priorityFilter) {
             return false
+        }
+        // tag
+        if (tagFilter !== 'all') {
+            if (t.tag !== tagFilter) return false
         }
         return true
     })
@@ -133,6 +149,16 @@ export default function TaskList() {
                         <option value="alta">Alta</option>
                     </select>
                 </div>
+
+                <div className="form-group flex items-center gap-sm">
+                    <label>Tag:</label>
+                    <select value={tagFilter} onChange={handleTagChange}>
+                        <option value="all">Todas</option>
+                        {availableTags.map(tag => (
+                            <option key={tag} value={tag}>{tag}</option>
+                        ))}
+                    </select>
+                </div>
             </div>
 
             {/* Acciones */}
@@ -161,6 +187,7 @@ export default function TaskList() {
                                 Deadline: {new Date(t.deadline).toLocaleString()}
                             </span>
                             <span>{t.status}</span>
+                            {t.tag && <span>#{t.tag}</span>}
                         </div>
                     </li>
                 ))}
@@ -174,29 +201,13 @@ export default function TaskList() {
             >
                 {selected && (
                     <>
-                        <p>
-                            <strong>Tarea:</strong> {selected.title}
-                        </p>
-                        <p>
-                            <strong>Estado:</strong> {selected.status}
-                        </p>
-                        <p>
-                            <strong>Deadline:</strong>{' '}
-                            {new Date(selected.deadline).toLocaleString()}
-                        </p>
-                        <p>
-                            <strong>Prioridad:</strong> {selected.priority}
-                        </p>
-                        {selected.location && (
-                            <p>
-                                <strong>Lugar:</strong> {selected.location}
-                            </p>
-                        )}
-                        {selected.assignedBy && (
-                            <p>
-                                <strong>Quién asignó:</strong> {selected.assignedBy}
-                            </p>
-                        )}
+                        <p><strong>Tarea:</strong> {selected.title}</p>
+                        <p><strong>Estado:</strong> {selected.status}</p>
+                        <p><strong>Deadline:</strong> {new Date(selected.deadline).toLocaleString()}</p>
+                        <p><strong>Prioridad:</strong> {selected.priority}</p>
+                        {selected.tag && <p><strong>Tag:</strong> {selected.tag}</p>}
+                        {selected.location && <p><strong>Lugar:</strong> {selected.location}</p>}
+                        {selected.assignedBy && <p><strong>Quién asignó:</strong> {selected.assignedBy}</p>}
                         {selected.recommendedDate && (
                             <p>
                                 <strong>Fecha recomendada:</strong>{' '}
@@ -204,26 +215,13 @@ export default function TaskList() {
                             </p>
                         )}
                         {selected.depends && selected.dependsOn && (
-                            <p>
-                                <strong>Depende de tarea ID:</strong> {selected.dependsOn}
-                            </p>
+                            <p><strong>Depende de tarea ID:</strong> {selected.dependsOn}</p>
                         )}
                         {selected.stalledReason && (
-                            <p>
-                                <strong>Motivo estancamiento:</strong>{' '}
-                                {selected.stalledReason}
-                            </p>
+                            <p><strong>Motivo estancamiento:</strong> {selected.stalledReason}</p>
                         )}
-                        {selected.observation && (
-                            <p>
-                                <strong>Observación:</strong> {selected.observation}
-                            </p>
-                        )}
-                        {selected.details && (
-                            <p>
-                                <strong>Detalle:</strong> {selected.details}
-                            </p>
-                        )}
+                        {selected.observation && <p><strong>Observación:</strong> {selected.observation}</p>}
+                        {selected.details && <p><strong>Detalle:</strong> {selected.details}</p>}
 
                         <div className="flex justify-end m-sm">
                             {selected.status !== 'finalizada' && (

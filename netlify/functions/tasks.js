@@ -48,7 +48,8 @@ exports.handler = async (event) => {
                 dependsOn: data.depends && data.dependsOn ? data.dependsOn : undefined,
                 stalledReason: data.stalledReason,
                 observation: data.observation,
-                details: data.details
+                details: data.details,
+                tag: data.tag  // ← Guardar el tag si viene
             }
 
             // Si está completada, asignar timestamps
@@ -70,7 +71,7 @@ exports.handler = async (event) => {
             const task = await Task.findOne({ _id: id, userId })
             if (!task) return { statusCode: 404, body: 'Tarea no encontrada' }
 
-            // Asignar campos presentes
+            // Asignar campos presentes (incluye tag si viene)
             Object.keys(data).forEach((key) => {
                 const val = data[key]
                 if (val !== undefined && val !== '') {

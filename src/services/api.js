@@ -35,23 +35,23 @@ apiClient.interceptors.response.use(
 )
 
 // Auth
-export const login = (u, p) =>
-    apiClient.post('/login', { username: u, password: p })
+export const login = (username, password) =>
+    apiClient.post('/login', { username, password })
 
-export const register = (u, p, c) =>
-    apiClient.post('/register', { username: u, password: p, code: c })
+export const register = (username, password, code) =>
+    apiClient.post('/register', { username, password, code })
 
 // Tasks CRUD
 export const getTasks = () =>
     apiClient.get('/tasks')
 
-export const createTask = (_, data) =>
-    apiClient.post('/tasks', data)
+export const createTask = (taskData) =>
+    apiClient.post('/tasks', taskData)
 
-export const updateTask = (_, id, data) =>
-    apiClient.put('/tasks', { id, ...data })
+export const updateTask = (id, taskData) =>
+    apiClient.put('/tasks', { id, ...taskData })
 
-export const deleteTask = (_, id) =>
+export const deleteTask = (id) =>
     apiClient.delete('/tasks', { params: { id } })
 
 // Streak endpoints

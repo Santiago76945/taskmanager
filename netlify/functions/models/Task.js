@@ -12,14 +12,15 @@ const TaskSchema = new Schema({
     location: String,
     assignedBy: String,
     recommendedDate: Date,
-    creationDate:   Date,
+    creationDate: Date,
     depends: Boolean,
     dependsOn: { type: Schema.Types.ObjectId, ref: 'Task' },
     stalledReason: String,
-    completionDate: Date, 
+    completionDate: Date,
     observation: String,
     details: String,
-    completedAt: Date
+    completedAt: Date,
+    tag: String 
 }, { timestamps: true })
 
 module.exports = mongoose.models.Task || model('Task', TaskSchema)
