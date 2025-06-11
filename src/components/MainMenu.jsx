@@ -176,7 +176,7 @@ export default function MainMenu() {
             </nav>
 
             <p className="streak-tip">
-                Cada día sin tareas atrasadas aumentas tu racha de productividad.
+                Cada día sin tareas atrasadas aumentas tu racha 🔥.
             </p>
 
             <Popup isOpen={confirmOpen} onClose={() => setConfirmOpen(false)} title="Confirmar borrado de todas las tareas">
