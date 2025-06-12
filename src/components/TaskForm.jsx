@@ -8,38 +8,46 @@ export default function TaskForm({
     onSubmit,
     onCancel
 }) {
-    const initData = initialData || {};
-
-    const [task, setTask] = useState({
-        title: initData.title ?? '',
-        status: initData.status ?? 'no comenzada',
-        deadline: initData.deadline ?? '',
-        priority: initData.priority ?? 'media',
-        location: initData.location ?? '',
-        assignedBy: initData.assignedBy ?? '',
-        recommendedDate: initData.recommendedDate ?? '',
-        creationDate: initData.creationDate ?? '',
-        depends: initData.depends ?? false,
-        dependsOn: initData.dependsOn ?? '',
-        stalledReason: initData.stalledReason ?? '',
-        observation: initData.observation ?? '',
-        details: initData.details ?? '',
-        completionDate: initData.completionDate ?? '',
-        tag: initData.tag ?? '',
-        customTag: initData.customTag ?? ''
+    // Función auxiliar que devuelve el objeto inicial según initialData
+    const getInitTask = (data) => ({
+        title: data?.title ?? '',
+        status: data?.status ?? 'no comenzada',
+        deadline: data?.deadline ?? '',
+        priority: data?.priority ?? 'media',
+        location: data?.location ?? '',
+        assignedBy: data?.assignedBy ?? '',
+        recommendedDate: data?.recommendedDate ?? '',
+        creationDate: data?.creationDate ?? '',
+        depends: data?.depends ?? false,
+        dependsOn: data?.dependsOn ?? '',
+        stalledReason: data?.stalledReason ?? '',
+        observation: data?.observation ?? '',
+        details: data?.details ?? '',
+        completionDate: data?.completionDate ?? '',
+        tag: data?.tag ?? '',
+        customTag: data?.customTag ?? ''
     });
 
+    // Inicializo el state usando initialData la primera vez
+    const [task, setTask] = useState(getInitTask(initialData));
     const [showStalled, setShowStalled] = useState(false);
     const [showDepends, setShowDepends] = useState(false);
     const [showCompletion, setShowCompletion] = useState(false);
     const [showCustomTag, setShowCustomTag] = useState(false);
 
+    // Cuando initialData cambie, reinicio el state del formulario con los valores existentes.
+    useEffect(() => {
+        setTask(getInitTask(initialData));
+    }, [initialData]);
+
+    // Manejo de secciones condicionales (estancada, depende, finalizada, tag personalizado)
     useEffect(() => {
         setShowStalled(task.status === 'estancada');
         setShowDepends(task.depends);
 
         if (task.status === 'finalizada') {
             setShowCompletion(true);
+            // Si no había fecha de completación, la prellenamos con ahora
             if (!task.completionDate) {
                 setTask(t => ({
                     ...t,
@@ -211,8 +219,7 @@ export default function TaskForm({
                     >
                         <option value="">-- Seleccione --</option>
                         {tasks.map((t) => (
-                            <option key={t._id} value={t._
-                            }>
+                            <option key={t._id} value={t._id}>
                                 {t.title}
                             </option>
                         ))}
