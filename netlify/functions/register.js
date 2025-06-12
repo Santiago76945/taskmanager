@@ -38,7 +38,7 @@ exports.handler = async (event) => {
         const salt = await bcrypt.genSalt(10)
         const hash = await bcrypt.hash(password, salt)
 
-        // ← Aquí el cambio clave:
+        // ← Uso correcto del campo definido en tu esquema:
         await new User({ username, passwordHash: hash, code }).save()
 
         return {
