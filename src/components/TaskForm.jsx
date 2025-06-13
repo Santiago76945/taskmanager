@@ -8,22 +8,27 @@ export default function TaskForm({
     onSubmit,
     onCancel
 }) {
-    // Función auxiliar que devuelve el objeto inicial según initialData
+    // Función auxiliar para formatear campos de fecha/hora a "YYYY-MM-DDThh:mm"
+    const formatDateTime = (value) =>
+        value ? value.slice(0, 16) : '';
+
+    // Función auxiliar que devuelve el objeto inicial según initialData,
+    // aplicando formateo a los campos de fecha/hora
     const getInitTask = (data) => ({
         title: data?.title ?? '',
         status: data?.status ?? 'no comenzada',
-        deadline: data?.deadline ?? '',
+        deadline: formatDateTime(data?.deadline),
         priority: data?.priority ?? 'media',
         location: data?.location ?? '',
         assignedBy: data?.assignedBy ?? '',
-        recommendedDate: data?.recommendedDate ?? '',
-        creationDate: data?.creationDate ?? '',
+        recommendedDate: formatDateTime(data?.recommendedDate),
+        creationDate: formatDateTime(data?.creationDate),
         depends: data?.depends ?? false,
         dependsOn: data?.dependsOn ?? '',
         stalledReason: data?.stalledReason ?? '',
         observation: data?.observation ?? '',
         details: data?.details ?? '',
-        completionDate: data?.completionDate ?? '',
+        completionDate: formatDateTime(data?.completionDate),
         tag: data?.tag ?? '',
         customTag: data?.customTag ?? ''
     });
@@ -35,7 +40,7 @@ export default function TaskForm({
     const [showCompletion, setShowCompletion] = useState(false);
     const [showCustomTag, setShowCustomTag] = useState(false);
 
-    // Cuando initialData cambie, reinicio el state del formulario con los valores existentes.
+    // Cuando initialData cambie, reinicio el state del formulario con los valores existentes
     useEffect(() => {
         setTask(getInitTask(initialData));
     }, [initialData]);

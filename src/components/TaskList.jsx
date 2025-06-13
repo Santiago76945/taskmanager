@@ -7,6 +7,18 @@ import * as api from '../services/api'
 import Popup from './Popup'
 import TaskForm from './TaskForm'
 
+// Función auxiliar para formatear campos de fecha/hora al formato "YYYY-MM-DDThh:mm"
+const formatTaskForForm = (task) => {
+    if (!task) return null
+    return {
+        ...task,
+        deadline: task.deadline ? task.deadline.slice(0, 16) : '',
+        recommendedDate: task.recommendedDate ? task.recommendedDate.slice(0, 16) : '',
+        creationDate: task.creationDate ? task.creationDate.slice(0, 16) : '',
+        completionDate: task.completionDate ? task.completionDate.slice(0, 16) : ''
+    }
+}
+
 export default function TaskList() {
     const { token } = useContext(AuthContext)
     const navigate = useNavigate()
@@ -183,9 +195,7 @@ export default function TaskList() {
                             onClick={() => openView(t)}
                         >
                             <span>{t.title}</span>
-                            <span>
-                                Deadline: {new Date(t.deadline).toLocaleString()}
-                            </span>
+                            <span>Deadline: {new Date(t.deadline).toLocaleString()}</span>
                             <span>{t.status}</span>
                             {t.tag && <span>#{t.tag}</span>}
                         </div>
@@ -209,39 +219,25 @@ export default function TaskList() {
                         {selected.location && <p><strong>Lugar:</strong> {selected.location}</p>}
                         {selected.assignedBy && <p><strong>Quién asignó:</strong> {selected.assignedBy}</p>}
                         {selected.recommendedDate && (
-                            <p>
-                                <strong>Fecha recomendada:</strong>{' '}
-                                {new Date(selected.recommendedDate).toLocaleString()}
-                            </p>
+                            <p><strong>Fecha recomendada:</strong> {new Date(selected.recommendedDate).toLocaleString()}</p>
                         )}
                         {selected.depends && selected.dependsOn && (
                             <p><strong>Depende de tarea ID:</strong> {selected.dependsOn}</p>
                         )}
-                        {selected.stalledReason && (
-                            <p><strong>Motivo estancamiento:</strong> {selected.stalledReason}</p>
-                        )}
+                        {selected.stalledReason && <p><strong>Motivo estancamiento:</strong> {selected.stalledReason}</p>}
                         {selected.observation && <p><strong>Observación:</strong> {selected.observation}</p>}
                         {selected.details && <p><strong>Detalle:</strong> {selected.details}</p>}
 
                         <div className="flex justify-end m-sm">
                             {selected.status !== 'finalizada' && (
-                                <button
-                                    className="btn btn-success"
-                                    onClick={handleComplete}
-                                >
+                                <button className="btn btn-success" onClick={handleComplete}>
                                     ✅ Completada
                                 </button>
                             )}
-                            <button
-                                className="btn btn-secondary"
-                                onClick={openEdit}
-                            >
+                            <button className="btn btn-secondary" onClick={openEdit}>
                                 Editar
                             </button>
-                            <button
-                                className="btn btn-danger"
-                                onClick={() => handleDelete(selected._id)}
-                            >
+                            <button className="btn btn-danger" onClick={() => handleDelete(selected._id)}>
                                 Eliminar
                             </button>
                         </div>
@@ -252,15 +248,12 @@ export default function TaskList() {
             {/* Crear/Editar formulario */}
             <Popup
                 isOpen={showForm}
-                onClose={() => {
-                    setShowForm(false)
-                    setSelected(null)
-                }}
+                onClose={() => { setShowForm(false); setSelected(null) }}
                 title={selected ? 'Editar tarea' : 'Crear tarea'}
             >
                 <TaskForm
                     tasks={tasks}
-                    initialData={selected}
+                    initialData={formatTaskForForm(selected)}
                     onSubmit={handleSubmit}
                     onCancel={() => setShowForm(false)}
                 />
