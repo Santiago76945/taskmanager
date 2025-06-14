@@ -1,36 +1,45 @@
 // src/components/LoginForm.jsx
 
-import { useState, useContext } from 'react'
-import { AuthContext } from '../contexts/AuthContext'
+import { useState, useContext } from 'react';
+import { AuthContext } from '../contexts/AuthContext';
 
 export default function LoginForm() {
-    const { login, register } = useContext(AuthContext)
-    const [mode, setMode] = useState('login')        // 'login' | 'register'
-    const [form, setForm] = useState({ username: '', password: '', code: '' })
-    const [error, setError] = useState('')
-    const [success, setSuccess] = useState('')
+    const { login, loginWithGoogle, register } = useContext(AuthContext);
+    const [mode, setMode] = useState('login');        // 'login' | 'register'
+    const [form, setForm] = useState({ username: '', password: '', code: '' });
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
 
     const handleChange = e => {
-        setForm({ ...form, [e.target.name]: e.target.value })
-    }
+        setForm({ ...form, [e.target.name]: e.target.value });
+    };
 
     const handleSubmit = async e => {
-        e.preventDefault()
-        setError('')
-        setSuccess('')
+        e.preventDefault();
+        setError('');
+        setSuccess('');
 
         try {
             if (mode === 'login') {
-                await login(form.username, form.password)
+                await login(form.username, form.password);
             } else {
-                await register(form.username, form.password, form.code)
-                setSuccess('Usuario registrado correctamente. Por favor inicia sesión.')
-                setMode('login')
+                await register(form.username, form.password, form.code);
+                setSuccess('Usuario registrado correctamente. Por favor inicia sesión.');
+                setMode('login');
             }
         } catch (err) {
-            setError(err.response?.data?.msg || 'Error del servidor')
+            setError(err.response?.data?.msg || 'Error del servidor');
         }
-    }
+    };
+
+    const handleGoogle = async () => {
+        setError('');
+        try {
+            await loginWithGoogle();
+        } catch (err) {
+            setError('No se pudo iniciar sesión con Google');
+        }
+    };
 
     return (
         <div className="flex flex-center" style={{ minHeight: '100vh' }}>
@@ -39,14 +48,12 @@ export default function LoginForm() {
                     {mode === 'login' ? 'Iniciar sesión' : 'Crear cuenta'}
                 </h2>
 
-                {/* Mensaje de éxito tras registro */}
                 {success && (
                     <p className="text-center m-sm" style={{ color: 'var(--color-success)' }}>
                         {success}
                     </p>
                 )}
 
-                {/* Mensaje de error */}
                 {error && (
                     <p className="text-center m-sm" style={{ color: 'var(--color-danger)' }}>
                         {error}
@@ -101,13 +108,21 @@ export default function LoginForm() {
                     </button>
                 </form>
 
+                <button
+                    onClick={handleGoogle}
+                    className="btn btn-google m-sm"
+                    style={{ width: '100%' }}
+                >
+                    Continuar con Google
+                </button>
+
                 <p
                     className="text-center text-primary m-md"
                     style={{ cursor: 'pointer' }}
                     onClick={() => {
-                        setError('')
-                        setSuccess('')
-                        setMode(mode === 'login' ? 'register' : 'login')
+                        setError('');
+                        setSuccess('');
+                        setMode(mode === 'login' ? 'register' : 'login');
                     }}
                 >
                     {mode === 'login'
@@ -116,6 +131,5 @@ export default function LoginForm() {
                 </p>
             </div>
         </div>
-    )
+    );
 }
-

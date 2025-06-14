@@ -1,18 +1,24 @@
 // netlify/functions/models/User.js
 
-const mongoose = require('mongoose')
-const { Schema, model } = mongoose
+const mongoose = require('mongoose');
+const { Schema, model } = mongoose;
 
 const UserSchema = new Schema({
+    userId: { type: String },                        // nuevo campo para Google UID
     username: { type: String, required: true, unique: true },
-    passwordHash: { type: String, required: true },
-    // código interno para registro
+    passwordHash: { type: String },                  // ya no es required
     code: String,
-
-    // → Nuevos campos para streak
     streak: { type: Number, default: 0 },
     lastUpdated: Date
-}, { timestamps: true })
+}, { timestamps: true });
 
-module.exports = mongoose.models.User || model('User', UserSchema)
+// Índice único sobre userId, pero solo para documentos donde userId es distinto de null
+UserSchema.index(
+    { userId: 1 },
+    {
+        unique: true,
+        partialFilterExpression: { userId: { $exists: true, $ne: null } }
+    }
+);
 
+module.exports = mongoose.models.User || model('User', UserSchema);

@@ -1,8 +1,8 @@
 // src/services/api.js
 
-import axios from 'axios'
+import axios from 'axios';
 
-const API_ROOT = import.meta.env.VITE_API_URL || '/.netlify/functions'
+const API_ROOT = import.meta.env.VITE_API_URL || '/.netlify/functions';
 
 // Creamos un cliente Axios con baseURL
 const apiClient = axios.create({
@@ -10,53 +10,57 @@ const apiClient = axios.create({
     headers: {
         'Content-Type': 'application/json',
     },
-})
+});
 
 // Interceptor para inyectar el token en cada petición
 apiClient.interceptors.request.use(config => {
-    const token = localStorage.getItem('token')
+    const token = localStorage.getItem('token');
     if (token) {
-        config.headers.Authorization = `Bearer ${token}`
+        config.headers.Authorization = `Bearer ${token}`;
     }
-    return config
-})
+    return config;
+});
 
 // Interceptor para manejar respuestas 401/403 y forzar logout
 apiClient.interceptors.response.use(
     response => response,
     error => {
-        const status = error.response?.status
+        const status = error.response?.status;
         if (status === 401 || status === 403) {
-            localStorage.removeItem('token')
-            window.location.href = '/'
+            localStorage.removeItem('token');
+            window.location.href = '/';
         }
-        return Promise.reject(error)
+        return Promise.reject(error);
     }
-)
+);
 
 // Auth
 export const login = (username, password) =>
-    apiClient.post('/login', { username, password })
+    apiClient.post('/login', { username, password });
 
 export const register = (username, password, code) =>
-    apiClient.post('/register', { username, password, code })
+    apiClient.post('/register', { username, password, code });
+
+// Google login endpoint (new)
+export const googleLogin = (idToken) =>
+    apiClient.post('/googleLogin', { idToken });
 
 // Tasks CRUD
 export const getTasks = () =>
-    apiClient.get('/tasks')
+    apiClient.get('/tasks');
 
 export const createTask = (taskData) =>
-    apiClient.post('/tasks', taskData)
+    apiClient.post('/tasks', taskData);
 
 export const updateTask = (id, taskData) =>
-    apiClient.put('/tasks', { id, ...taskData })
+    apiClient.put('/tasks', { id, ...taskData });
 
 export const deleteTask = (id) =>
-    apiClient.delete('/tasks', { params: { id } })
+    apiClient.delete('/tasks', { params: { id } });
 
 // Streak endpoints
 export const getStreak = () =>
-    apiClient.get('/streak')
+    apiClient.get('/streak');
 
 export const updateStreak = ({ reset }) =>
-    apiClient.post('/streak', { reset })
+    apiClient.post('/streak', { reset });
