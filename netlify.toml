@@ -8,11 +8,20 @@
   directory = "netlify/functions"
 
 [dev]
-  command    = "npm run dev"   # esto lanza Vite en el 3000
-  targetPort = 3000            # puerto donde tu dev-server responde
-  port       = 8888            # puerto donde Netlify montará front + lambdas
-  autoLaunch = false           # ← desactivamos auto-abrir pestaña independiente
+  command    = "npm run dev"
+  targetPort = 3000
+  port       = 8888
+  autoLaunch = false
 
 [build.processing]
-  # Lista de claves de env vars que NO quieres que escanee como secretos
-  secrets_scan_omit_keys = ["VITE_FIREBASE_API_KEY", "VITE_FIREBASE_AUTH_DOMAIN", "VITE_FIREBASE_PROJECT_ID", "VITE_FIREBASE_STORAGE_BUCKET", "VITE_FIREBASE_MESSAGING_SENDER_ID", "VITE_FIREBASE_APP_ID", "VITE_FIREBASE_MEASUREMENT_ID"]
+  # Omitimos las vars que cargamos en el cliente y que queremos exponer
+  secrets_scan_omit_keys = [
+    "FIREBASE_PROJECT_ID",            # <— agregá esta
+    "VITE_FIREBASE_API_KEY",
+    "VITE_FIREBASE_AUTH_DOMAIN",
+    "VITE_FIREBASE_PROJECT_ID",
+    "VITE_FIREBASE_STORAGE_BUCKET",
+    "VITE_FIREBASE_MESSAGING_SENDER_ID",
+    "VITE_FIREBASE_APP_ID",
+    "VITE_FIREBASE_MEASUREMENT_ID"
+  ]
