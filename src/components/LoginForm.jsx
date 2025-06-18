@@ -5,7 +5,7 @@ import { AuthContext } from '../contexts/AuthContext';
 
 export default function LoginForm() {
     const { login, loginWithGoogle, register } = useContext(AuthContext);
-    const [mode, setMode] = useState('login');        // 'login' | 'register'
+    const [mode, setMode] = useState('login'); // 'login' | 'register'
     const [form, setForm] = useState({ username: '', password: '', code: '' });
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
@@ -42,10 +42,18 @@ export default function LoginForm() {
     };
 
     return (
-        <div className="flex flex-center" style={{ minHeight: '100vh' }}>
-            <div className="card card-primary" style={{ width: '100%', maxWidth: '400px' }}>
+        <div
+            className="flex flex-center"
+            style={{
+                minHeight: '100vh',
+                width: '100%',
+                background: 'var(--color-surface)',
+                padding: 'var(--spacing-lg)'
+            }}
+        >
+            <div style={{ width: '100%', maxWidth: '400px' }}>
                 <h2 className="text-center m-md">
-                    {mode === 'login' ? 'Iniciar sesión' : 'Crear cuenta'}
+                    {mode === 'login' ? 'Bienvenido a Demetrios 🌱' : 'Crear cuenta'}
                 </h2>
 
                 {success && (
@@ -55,7 +63,7 @@ export default function LoginForm() {
                 )}
 
                 {error && (
-                    <p className="text-center m-sm" style={{ color: 'var(--color-danger)' }}>
+                    <p className="text-center m-sm" style={{ color: 'var(--color-destructive)' }}>
                         {error}
                     </p>
                 )}
@@ -102,22 +110,18 @@ export default function LoginForm() {
 
                     <button
                         type="submit"
-                        className={`btn ${mode === 'login' ? 'btn-primary' : 'btn-secondary'} m-sm`}
+                        className={`btn ${mode === 'login' ? 'btn-primary' : 'btn-secondary'} btn-block`}
                     >
                         {mode === 'login' ? 'Entrar' : 'Registrarse'}
                     </button>
                 </form>
 
-                <button
-                    onClick={handleGoogle}
-                    className="btn btn-google m-sm"
-                    style={{ width: '100%' }}
-                >
+                <button onClick={handleGoogle} className="btn btn-google btn-block">
                     Continuar con Google
                 </button>
 
                 <p
-                    className="text-center text-primary m-md"
+                    className="text-center m-md"
                     style={{ cursor: 'pointer' }}
                     onClick={() => {
                         setError('');
@@ -126,7 +130,7 @@ export default function LoginForm() {
                     }}
                 >
                     {mode === 'login'
-                        ? '¿No tienes cuenta? Regístrate'
+                        ? 'Crear una cuenta con código de autorización'
                         : '¿Ya tienes cuenta? Inicia sesión'}
                 </p>
             </div>

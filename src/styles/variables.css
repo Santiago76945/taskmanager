@@ -1,0 +1,67 @@
+/* -------------------------------------------------
+   styles/variables.css
+   ------------------------------------------------- */
+
+/* Diseño de tokens */
+:root {
+    /* Fondos y superficies */
+    --color-bg: #ffffff;
+    --color-surface: linear-gradient(to bottom right, #fdff6d, #5fcd7a);
+
+    /* Tipografías */
+    --font-sans: 'Inter', sans-serif;
+    --font-heading: 'Poppins', sans-serif;
+
+    /* Tipografía de texto */
+    --color-text: #2d3748;
+    --color-text-muted: #0a340f;
+
+    /* Colores de acción */
+    --color-primary: #000000;         /* Acción principal */
+    --color-primary-hover: #c084fc;   /* Hover principal */
+    --color-secondary: #1482f0;       /* Acción secundaria */
+    --color-accent: #f6ad55;          /* Acento */
+
+    /* Colores de estado */
+    --color-success: #5fb96b;         /* Estado de éxito */
+    --color-destructive: #ef4444;     /* Acción destructiva */
+    --color-error: #e00;              /* Estado de error */
+    --color-error-bg: #fee;           /* Fondo de error */
+
+    /* Fondos de componente */
+    --color-card-bg: #2b2b2b;         /* Fondo de tarjetas métricas */
+
+    /* Espaciados */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+
+    /* Bordes y radios */
+    --border-radius: 0.5rem;
+    --border-radius-lg: 0.75rem;
+}
+
+/* Modo oscuro */
+html.dark {
+    --color-bg: #1b1b1e;
+    --color-surface: #262629;
+
+    --color-text: #e3e3e5;
+    --color-text-muted: #b9b9c9;
+
+    --color-primary: #9f7aea;
+    --color-primary-hover: #c084fc;
+    --color-secondary: #a0aec0;
+    --color-accent: #f6ad55;
+
+    --color-success: #5fb96b;
+    --color-destructive: #ef4444;
+    --color-error: #e00;
+    --color-error-bg: #3f1f1f;
+
+    --color-card-bg: #33333a;
+
+    /* Espaciados y bordes se mantienen */
+}

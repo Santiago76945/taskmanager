@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AuthContext } from '../contexts/AuthContext'
-import '../styles/unified.css'
 import demeterLogo from '../assets/logo.png'
 import Popup from './Popup'
 import * as api from '../services/api'
