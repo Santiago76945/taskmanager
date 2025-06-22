@@ -27,12 +27,17 @@ body {
     transition: transform 0.25s ease, box-shadow 0.25s ease;
     animation: fadeInUp 0.5s ease-out;
     overflow-y: auto;
-    /* Para layout centrado vertical, sería opcional:
-       display: flex;
-       flex-direction: column;
-       justify-content: center;
-       align-items: center;
-       gap: var(--spacing-xl); */
+}
+
+.main-menu-card {
+    width: min(92vw, 720px);
+    margin: 0 auto;
+    /* <-- Esto la centra */
+    padding: var(--spacing-xl) var(--spacing-lg);
+    background: var(--color-surface);
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    /* …el resto de tus reglas… */
 }
 
 .main-menu-card:hover {

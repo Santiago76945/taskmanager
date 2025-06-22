@@ -1,24 +1,24 @@
 // src/components/LoginForm.jsx
 
-import { useState, useContext } from 'react';
+import React, { useState, useContext } from 'react';
+import logoAndText from '../assets/logo-and-text.png';
+import GoogleIcon from '../assets/google-icon.svg';
 import { AuthContext } from '../contexts/AuthContext';
 
 export default function LoginForm() {
     const { login, loginWithGoogle, register } = useContext(AuthContext);
-    const [mode, setMode] = useState('login'); // 'login' | 'register'
+    const [mode, setMode] = useState('login');            // 'login' | 'register'
     const [form, setForm] = useState({ username: '', password: '', code: '' });
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
-    const handleChange = e => {
+    const handleChange = e =>
         setForm({ ...form, [e.target.name]: e.target.value });
-    };
 
     const handleSubmit = async e => {
         e.preventDefault();
         setError('');
         setSuccess('');
-
         try {
             if (mode === 'login') {
                 await login(form.username, form.password);
@@ -36,43 +36,37 @@ export default function LoginForm() {
         setError('');
         try {
             await loginWithGoogle();
-        } catch (err) {
+        } catch {
             setError('No se pudo iniciar sesión con Google');
         }
     };
 
     return (
-        <div
-            className="flex flex-center"
-            style={{
-                minHeight: '100vh',
-                width: '100%',
-                background: 'var(--color-surface)',
-                padding: 'var(--spacing-lg)'
-            }}
-        >
-            <div style={{ width: '100%', maxWidth: '400px' }}>
-                <h2 className="text-center m-md">
-                    {mode === 'login' ? 'Bienvenido a Demetrios 🌱' : 'Crear cuenta'}
-                </h2>
+        <div className="login-container">
+            {/* ---------- CARD PRINCIPAL ---------- */}
+            <div className="login-card">
 
-                {success && (
-                    <p className="text-center m-sm" style={{ color: 'var(--color-success)' }}>
-                        {success}
-                    </p>
+                {/* Logo y lema / título */}
+                <div className="login-logo">
+                    <img src={logoAndText} alt="Demi logo" />
+                </div>
+
+                {mode === 'login' ? (
+                    <p className="login-motto">The habit of getting things done!</p>
+                ) : (
+                    <h2 className="login-heading">Crear cuenta</h2>
                 )}
 
-                {error && (
-                    <p className="text-center m-sm" style={{ color: 'var(--color-destructive)' }}>
-                        {error}
-                    </p>
-                )}
+                {/* Mensajes de estado */}
+                {success && <p className="login-message login-success">{success}</p>}
+                {error && <p className="login-message login-error">{error}</p>}
 
+                {/* ---------- FORMULARIO ---------- */}
                 <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                        <label>Usuario</label>
+                    <div className="login-form-group">
+                        <label className="login-label">Usuario</label>
                         <input
-                            className="p-sm"
+                            className="login-input"
                             name="username"
                             placeholder="Usuario"
                             value={form.username}
@@ -81,10 +75,10 @@ export default function LoginForm() {
                         />
                     </div>
 
-                    <div className="form-group">
-                        <label>Contraseña</label>
+                    <div className="login-form-group">
+                        <label className="login-label">Contraseña</label>
                         <input
-                            className="p-sm"
+                            className="login-input"
                             name="password"
                             type="password"
                             placeholder="Contraseña"
@@ -95,10 +89,10 @@ export default function LoginForm() {
                     </div>
 
                     {mode === 'register' && (
-                        <div className="form-group">
-                            <label>Código de autorización</label>
+                        <div className="login-form-group">
+                            <label className="login-label">Código de autorización</label>
                             <input
-                                className="p-sm"
+                                className="login-input"
                                 name="code"
                                 placeholder="Código de autorización"
                                 value={form.code}
@@ -110,19 +104,22 @@ export default function LoginForm() {
 
                     <button
                         type="submit"
-                        className={`btn ${mode === 'login' ? 'btn-primary' : 'btn-secondary'} btn-block`}
+                        className={`login-btn ${mode === 'login' ? 'login-btn-primary' : 'login-btn-secondary'
+                            }`}
                     >
                         {mode === 'login' ? 'Entrar' : 'Registrarse'}
                     </button>
                 </form>
 
-                <button onClick={handleGoogle} className="btn btn-google btn-block">
+                {/* ---------- GOOGLE ---------- */}
+                <button onClick={handleGoogle} className="login-btn login-btn-google">
+                    <img src={GoogleIcon} alt="Google logo" />
                     Continuar con Google
                 </button>
 
+                {/* ---------- CAMBIO DE MODO ---------- */}
                 <p
-                    className="text-center m-md"
-                    style={{ cursor: 'pointer' }}
+                    className="login-toggle-mode"
                     onClick={() => {
                         setError('');
                         setSuccess('');
@@ -134,6 +131,19 @@ export default function LoginForm() {
                         : '¿Ya tienes cuenta? Inicia sesión'}
                 </p>
             </div>
+
+            {/* ---------- FOOTER ---------- */}
+            <footer className="login-footer">
+                <a href="/terms" target="_blank" rel="noopener noreferrer">
+                    Terms of Use
+                </a>
+                |
+                <a href="/privacy" target="_blank" rel="noopener noreferrer">
+                    Privacy Policy
+                </a>
+                <br />
+                TK Apps® 2025
+            </footer>
         </div>
     );
 }

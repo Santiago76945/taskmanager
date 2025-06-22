@@ -1,0 +1,148 @@
+/* mainmenu.css: Clases exclusivas para MainMenu.jsx (prefijo mainmenu__) */
+
+/* Contenedor principal: siempre degradado verde */
+.mainmenu__card {
+    background: var(--color-surface);
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    padding: var(--spacing-lg);
+}
+
+/* Encabezado: logo y controles */
+.mainmenu__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-lg);
+}
+
+/* Imagen de logo y texto */
+.mainmenu__logo-text {
+    height: 40px;
+    object-fit: contain;
+}
+
+/* Theme Switch (override para mejor contraste) */
+.mainmenu__header .theme-switch .slider {
+    background-color: var(--color-bg);
+}
+
+.mainmenu__header .theme-switch .slider::before {
+    background-color: var(--color-text);
+}
+
+.mainmenu__header .theme-switch input:checked+.slider {
+    background-color: var(--color-text);
+}
+
+.mainmenu__header .theme-switch input:checked+.slider::before {
+    transform: translateX(1rem);
+}
+
+/* Logout Button (override) */
+.mainmenu__header .logout-btn {
+    background: transparent;
+    border: 1px solid var(--color-text);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-sm) var(--spacing-md);
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: var(--color-text);
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.mainmenu__header .logout-btn:hover {
+    background-color: var(--color-text);
+    color: var(--color-bg);
+}
+
+/* Grupo de estadísticas */
+.mainmenu__stats {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.mainmenu__stat {
+    background: var(--color-bg);
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    padding: var(--spacing-md);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.mainmenu__stat-label {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    color: var(--color-primary);
+}
+
+.mainmenu__stat-value {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    color: var(--color-primary);
+    margin-top: var(--spacing-xs);
+}
+
+/* Rejilla de botones de acción */
+.mainmenu__actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+/* Botones de acción: fondo claro siempre */
+.mainmenu__action-button {
+    background: var(--color-bg);
+    padding: var(--spacing-md);
+    font-family: var(--font-heading);
+    font-size: 1.125rem;
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    text-align: center;
+    border: 1px solid var(--color-primary);
+    color: var(--color-primary);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Hover genérico: elevación */
+.mainmenu__action-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.06);
+}
+
+/* Hover en modo claro: fondo negro, texto blanco */
+:root:not(.dark) .mainmenu__action-button:hover {
+    background: var(--color-primary);
+    color: var(--color-bg);
+}
+
+/* Hover en modo oscuro: fondo principal hover, texto claro */
+:root.dark .mainmenu__action-button:hover {
+    background: var(--color-primary-hover);
+    color: var(--color-bg);
+}
+
+/* Consejo de racha al pie */
+.mainmenu__tip {
+    text-align: center;
+    font-size: 0.875rem;
+    color: var(--color-text);
+    margin-top: var(--spacing-md);
+}
+
+
+.mainmenu__logo-text {
+    height: 60px;
+    object-fit: contain;
+}
+
+.mainmenu__controls {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}

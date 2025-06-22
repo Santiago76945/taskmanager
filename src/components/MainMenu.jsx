@@ -3,8 +3,10 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AuthContext } from '../contexts/AuthContext'
-import demeterLogo from '../assets/logo.png'
+import logoAndText from '../assets/logo-and-text.png'
+import logoAndTextDark from '../assets/logo-and-text-dark-mode.png'
 import Popup from './Popup'
+import AdBanner from './AdBanner'
 import * as api from '../services/api'
 
 export default function MainMenu() {
@@ -42,7 +44,6 @@ export default function MainMenu() {
         }
     }, [darkMode])
 
-    // Carga tareas y calcula estadísticas
     useEffect(() => {
         if (!token) return
 
@@ -50,10 +51,8 @@ export default function MainMenu() {
             try {
                 const { data: tasks } = await api.getTasks()
                 const now = new Date()
+                const diff = (now.getDay() + 6) % 7
                 const startOfWeek = new Date(now)
-                // establecer al lunes de esta semana
-                const day = startOfWeek.getDay() // 0=domingo
-                const diff = (day + 6) % 7 // diferencia hacia lunes
                 startOfWeek.setDate(startOfWeek.getDate() - diff)
                 startOfWeek.setHours(0, 0, 0, 0)
                 const endOfWeek = new Date(startOfWeek)
@@ -67,11 +66,8 @@ export default function MainMenu() {
                     const dl = new Date(t.deadline)
                     const isDone = t.status === 'finalizada'
                     if (!isDone) {
-                        // atrasadas
                         if (dl < now) countOverdue++
-                        // alta prioridad
                         if (t.priority === 'alta') countHigh++
-                        // esta semana
                         if (dl >= startOfWeek && dl < endOfWeek) countWeek++
                     }
                 })
@@ -110,97 +106,114 @@ export default function MainMenu() {
     }
 
     return (
-        <main className="main-menu-card">
-            <header className="header">
-                <img className="mascot" src={demeterLogo} alt="Deméter regando la cosecha" />
-                <div className="title-container">
-                    <h1 className="title">Demetrios</h1>
-                    <p className="subtitle">The Ritual of Getting Things Done</p>
-                </div>
+        <>
+            {/* AdBanner se mostrará con probabilidad 1 de 5 */}
+            <AdBanner
+                title="¡Mejora tu productividad!"
+                imageUrl="/ads/productivity.png"
+                body="Prueba Demetria+ gratis durante 7 días. ¡Inténtalo ya!"
+            />
 
-                <label className="theme-switch">
-                    {darkMode ? '🌙' : '☀️'}
-                    <input
-                        type="checkbox"
-                        checked={darkMode}
-                        onChange={() => setDarkMode(prev => !prev)}
-                        aria-label="Alternar modo claro/oscuro"
+            <main className="mainmenu__card">
+                <header className="mainmenu__header">
+                    <img
+                        src={darkMode ? logoAndTextDark : logoAndText}
+                        alt="Demi logo and name"
+                        className="mainmenu__logo-text"
                     />
-                    <span className="slider" />
-                </label>
+                    <div className="mainmenu__controls">
+                        <label className="theme-switch">
+                            {darkMode ? '🌙' : '☀️'}
+                            <input
+                                type="checkbox"
+                                checked={darkMode}
+                                onChange={() => setDarkMode(prev => !prev)}
+                                aria-label="Alternar modo claro/oscuro"
+                            />
+                            <span className="slider" />
+                        </label>
+                        <button
+                            className="logout-btn"
+                            aria-label="Cerrar sesión"
+                            onClick={logout}
+                        >
+                            ⏻
+                        </button>
+                    </div>
+                </header>
 
-                <button className="logout-btn" aria-label="Cerrar sesión" onClick={logout}>
-                    ⏻
-                </button>
-            </header>
+                <section className="mainmenu__stats">
+                    <div className="mainmenu__stat">
+                        <span className="mainmenu__stat-label">Racha</span>
+                        <span className="mainmenu__stat-value">🔥 {streak}</span>
+                    </div>
+                    <div className="mainmenu__stat">
+                        <span className="mainmenu__stat-label">Esta semana</span>
+                        <span className="mainmenu__stat-value">📅 {weekCount}</span>
+                    </div>
+                    <div className="mainmenu__stat">
+                        <span className="mainmenu__stat-label">Alta prioridad</span>
+                        <span className="mainmenu__stat-value">⚡️ {highPriorityCount}</span>
+                    </div>
+                    <div className="mainmenu__stat">
+                        <span className="mainmenu__stat-label">Atrasadas</span>
+                        <span className="mainmenu__stat-value">⏳ {overdueCount}</span>
+                    </div>
+                </section>
 
-            <section className="stats">
-                <div className="stat">
-                    <span className="stat-label">Racha</span>
-                    <span className="stat-value">🔥 {streak}</span>
-                </div>
-                <div className="stat">
-                    <span className="stat-label">Esta semana</span>
-                    <span className="stat-value">📅 {weekCount}</span>
-                </div>
-                <div className="stat">
-                    <span className="stat-label">Alta prioridad</span>
-                    <span className="stat-value">⚡️ {highPriorityCount}</span>
-                </div>
-                <div className="stat">
-                    <span className="stat-label">Atrasadas</span>
-                    <span className="stat-value">⏳ {overdueCount}</span>
-                </div>
-            </section>
+                <nav className="mainmenu__actions">
+                    <button className="mainmenu__action-button" onClick={() => navigate('/dashboard/tasks')}>
+                        Mis tareas
+                    </button>
+                    <button className="mainmenu__action-button" onClick={() => navigate('/dashboard/import')}>
+                        Importar tareas
+                    </button>
+                    <button className="mainmenu__action-button" onClick={() => navigate('/dashboard/export')}>
+                        Exportar tareas
+                    </button>
+                    <button className="mainmenu__action-button" onClick={() => { /* futura funcionalidad AI */ }}>
+                        Demetria: Asistente AI
+                    </button>
+                    <button className="mainmenu__action-button" onClick={() => { /* futura funcionalidad Premium */ }}>
+                        Desactivar Ads
+                    </button>
+                    <button className="mainmenu__action-button" onClick={openConfirm}>
+                        Borrar todas mis tareas
+                    </button>
+                </nav>
 
-            <nav className="menu">
-                <button className="action main-menu-button" onClick={() => navigate('/dashboard/tasks')}>
-                    Mis tareas
-                </button>
-                <button className="action main-menu-button" onClick={() => navigate('/dashboard/import')}>
-                    Importar tareas
-                </button>
-                <button className="action main-menu-button" onClick={() => navigate('/dashboard/export')}>
-                    Exportar tareas
-                </button>
-                <button className="action main-menu-button" onClick={() => { /* futura funcionalidad AI */ }}>
-                    Asistente AI Demetria
-                </button>
-                <button className="action main-menu-button" onClick={() => { /* futura funcionalidad Premium */ }}>
-                    Adquirir Demetrios+
-                </button>
-                <button className="action main-menu-button" onClick={openConfirm}>
-                    Borrar todas mis tareas
-                </button>
-            </nav>
-
-            <p className="streak-tip">
-                Cada día sin tareas atrasadas aumentas tu racha 🔥.
-            </p>
-
-            <Popup isOpen={confirmOpen} onClose={() => setConfirmOpen(false)} title="Confirmar borrado de todas las tareas">
-                <p>
-                    ¿Estás seguro que deseas borrar <strong>todas</strong> tus tareas? Esta acción es <strong>irreversible</strong>.
+                <p className="mainmenu__tip">
+                    Cada día sin tareas atrasadas aumentas tu racha 🔥.
                 </p>
-                <p>Para confirmar, escribe exactamente:</p>
-                <pre className="confirmation-text">quiero borrar todo</pre>
-                <input
-                    className="form-input mt-sm"
-                    placeholder="Escribe aquí..."
-                    value={inputText}
-                    onChange={e => setInputText(e.target.value)}
-                />
-                {confirmError && <p className="text-danger mt-xs">{confirmError}</p>}
-                {confirmSuccess && <p className="text-success mt-xs">{confirmSuccess}</p>}
-                <div className="flex justify-end mt-md">
-                    <button className="btn btn-secondary m-sm" onClick={() => setConfirmOpen(false)}>
-                        Cancelar
-                    </button>
-                    <button className="btn btn-danger m-sm" onClick={handleDeleteAll}>
-                        Confirmar borrado
-                    </button>
-                </div>
-            </Popup>
-        </main>
+
+                <Popup
+                    isOpen={confirmOpen}
+                    onClose={() => setConfirmOpen(false)}
+                    title="Confirmar borrado de todas las tareas"
+                >
+                    <p>
+                        ¿Estás seguro que deseas borrar <strong>todas</strong> tus tareas? Esta acción es <strong>irreversible</strong>.
+                    </p>
+                    <p>Para confirmar, escribe exactamente:</p>
+                    <pre className="confirmation-text">quiero borrar todo</pre>
+                    <input
+                        className="form-input mt-sm"
+                        placeholder="Escribe aquí..."
+                        value={inputText}
+                        onChange={e => setInputText(e.target.value)}
+                    />
+                    {confirmError && <p className="text-danger mt-xs">{confirmError}</p>}
+                    {confirmSuccess && <p className="text-success mt-xs">{confirmSuccess}</p>}
+                    <div className="flex justify-end mt-md">
+                        <button className="btn btn-secondary m-sm" onClick={() => setConfirmOpen(false)}>
+                            Cancelar
+                        </button>
+                        <button className="btn btn-danger m-sm" onClick={handleDeleteAll}>
+                            Confirmar borrado
+                        </button>
+                    </div>
+                </Popup>
+            </main>
+        </>
     )
 }

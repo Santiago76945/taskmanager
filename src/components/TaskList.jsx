@@ -37,7 +37,6 @@ export default function TaskList() {
         try {
             const { data } = await api.getTasks()
             setTasks(data)
-            // construir lista de tags únicas
             const tags = Array.from(
                 new Set(data.filter(t => t.tag).map(t => t.tag))
             )
@@ -115,35 +114,33 @@ export default function TaskList() {
         setTagFilter(e.target.value)
 
     const filteredTasks = tasks.filter((t) => {
-        // estado
         if (showCompleted) {
             if (t.status !== 'finalizada') return false
         } else {
             if (t.status === 'finalizada') return false
         }
-        // prioridad
         if (priorityFilter !== 'all' && t.priority !== priorityFilter) {
             return false
         }
-        // tag
-        if (tagFilter !== 'all') {
-            if (t.tag !== tagFilter) return false
+        if (tagFilter !== 'all' && t.tag !== tagFilter) {
+            return false
         }
         return true
     })
 
     return (
-        <div className="main-menu-card p-lg">
-            {/* Título */}
-            <div className="flex justify-between items-center p-md">
-                <h2 className="title">Tus tareas</h2>
-            </div>
+        <div className="tasklist__container">
+            {/* Header */}
+            <header className="tasklist__header">
+                <h2 className="tasklist__title">Tus tareas</h2>
+            </header>
 
-            {/* Filtros */}
-            <div className="task-filters">
-                <div className="form-group flex items-center gap-sm">
-                    <label>Estado:</label>
+            {/* Filters */}
+            <div className="tasklist__filters">
+                <div className="tasklist__filter-group">
+                    <label className="tasklist__filter-label">Estado:</label>
                     <select
+                        className="tasklist__filter-select"
                         value={showCompleted ? 'completed' : 'pending'}
                         onChange={handleStatusFilterChange}
                     >
@@ -151,20 +148,26 @@ export default function TaskList() {
                         <option value="completed">Completadas</option>
                     </select>
                 </div>
-
-                <div className="form-group flex items-center gap-sm">
-                    <label>Prioridad:</label>
-                    <select value={priorityFilter} onChange={handlePriorityChange}>
+                <div className="tasklist__filter-group">
+                    <label className="tasklist__filter-label">Prioridad:</label>
+                    <select
+                        className="tasklist__filter-select"
+                        value={priorityFilter}
+                        onChange={handlePriorityChange}
+                    >
                         <option value="all">Todas</option>
                         <option value="baja">Baja</option>
                         <option value="media">Media</option>
                         <option value="alta">Alta</option>
                     </select>
                 </div>
-
-                <div className="form-group flex items-center gap-sm">
-                    <label>Tag:</label>
-                    <select value={tagFilter} onChange={handleTagChange}>
+                <div className="tasklist__filter-group">
+                    <label className="tasklist__filter-label">Tag:</label>
+                    <select
+                        className="tasklist__filter-select"
+                        value={tagFilter}
+                        onChange={handleTagChange}
+                    >
                         <option value="all">Todas</option>
                         {availableTags.map(tag => (
                             <option key={tag} value={tag}>{tag}</option>
@@ -173,37 +176,44 @@ export default function TaskList() {
                 </div>
             </div>
 
-            {/* Acciones */}
-            <div className="flex items-center gap-sm m-md">
+            {/* Actions */}
+            <div className="tasklist__actions">
                 <button
-                    className="btn btn-secondary"
+                    className="tasklist__action-button"
                     onClick={() => navigate('/dashboard')}
                 >
                     Volver al menú
                 </button>
-                <button className="btn btn-primary" onClick={openCreate}>
+                <button
+                    className="tasklist__action-button"
+                    onClick={openCreate}
+                >
                     Crear tarea
                 </button>
             </div>
 
-            {/* Lista de tareas */}
-            <ul className="list-reset">
-                {filteredTasks.map((t) => (
-                    <li key={t._id}>
+            {/* Task list */}
+            <ul className="tasklist__list">
+                {filteredTasks.map(t => (
+                    <li key={t._id} className="tasklist__list-item">
                         <div
-                            className="card card-secondary p-md flex justify-between items-center m-sm"
+                            className="tasklist__item-card"
                             onClick={() => openView(t)}
                         >
-                            <span>{t.title}</span>
-                            <span>Deadline: {new Date(t.deadline).toLocaleString()}</span>
-                            <span>{t.status}</span>
-                            {t.tag && <span>#{t.tag}</span>}
+                            <div className="tasklist__item-content">
+                                <span className="tasklist__item-title">{t.title}</span>
+                                <div className="tasklist__item-meta">
+                                    <span>Deadline: {new Date(t.deadline).toLocaleString()}</span>
+                                    <span className="tasklist__item-status">{t.status}</span>
+                                    {t.tag && <span className="tasklist__item-tag">#{t.tag}</span>}
+                                </div>
+                            </div>
                         </div>
                     </li>
                 ))}
             </ul>
 
-            {/* Vista detallada */}
+            {/* Detail Popup */}
             <Popup
                 isOpen={!!(selected && !showForm)}
                 onClose={() => setSelected(null)}
@@ -245,7 +255,7 @@ export default function TaskList() {
                 )}
             </Popup>
 
-            {/* Crear/Editar formulario */}
+            {/* Form Popup */}
             <Popup
                 isOpen={showForm}
                 onClose={() => { setShowForm(false); setSelected(null) }}
