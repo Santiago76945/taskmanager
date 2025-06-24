@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import * as api from '../services/api'
 import demiIcon from '../assets/demi-coin.png'
 import demiProfile from '../assets/demetria-profile.png'
+import CoinPurchaseModal from './CoinPurchaseModal'
 
 export default function AIChat() {
     const navigate = useNavigate()
@@ -17,6 +18,7 @@ export default function AIChat() {
     const [coins, setCoins] = useState(0)
     const [pendingCost, setPendingCost] = useState(null)
     const [queuedInput, setQueuedInput] = useState(null)
+    const [isModalVisible, setModalVisible] = useState(false)
     const chatEndRef = useRef(null)
 
     // Al montar, traemos el saldo real
@@ -121,7 +123,8 @@ export default function AIChat() {
         }
         if (coins < pendingCost) {
             await pushBot('Saldo insuficiente. Por favor, compra Demi Coins.')
-            return showOptions()
+            setModalVisible(true)
+            return
         }
 
         // Mostrar mensaje del usuario
@@ -192,19 +195,32 @@ export default function AIChat() {
         showOptions()
     }
 
-    // Comprar Demi Coins (testing)
-    const buyCoins = async () => {
+    // Mostrar modal de compra
+    const handleOpenModal = () => {
+        setModalVisible(true)
+    }
+
+    // Procesar compra desde el modal
+    const handlePurchase = async (amount) => {
         try {
-            const res = await api.addCoins()
+            const res = await api.addCoins(amount)
             setCoins(res.data.demiCoins)
-            await pushBot('✔️ Has comprado 100 Demi Coins.')
+            await pushBot(`✔️ Has comprado ${amount} Demi Coins.`)
         } catch {
             await pushBot('❌ No se pudo completar la compra. Inténtalo de nuevo.')
+        } finally {
+            setModalVisible(false)
         }
     }
 
     return (
         <div className="aiassistant__container">
+            <CoinPurchaseModal
+                visible={isModalVisible}
+                onClose={() => setModalVisible(false)}
+                onPurchase={handlePurchase}
+            />
+
             <header className="aiassistant__header">
                 <button className="aiassistant__back-btn" onClick={() => navigate('/dashboard')}>
                     ← Volver
@@ -212,7 +228,7 @@ export default function AIChat() {
                 <div className="aiassistant__balance">
                     <img src={demiIcon} alt="Demi Coins" className="aiassistant__coin-icon" />
                     <span>{coins.toFixed(2)}</span>
-                    <button className="aiassistant__buy-btn" onClick={buyCoins}>
+                    <button className="aiassistant__buy-btn" onClick={handleOpenModal}>
                         +100
                     </button>
                 </div>
@@ -222,11 +238,8 @@ export default function AIChat() {
                 {messages.map((m, i) =>
                     m.type === 'options' ? (
                         <div key={i} className="aiassistant__options">
-                            <button className="aiassistant__option-btn" onClick={() => chooseOption('query')}>
-                                Necesito saber algo sobre mis tareas
-                            </button>
-                            <button className="aiassistant__option-btn" onClick={() => chooseOption('add')}>
-                                Necesito añadas una tarea por mí
+                            <button className="aiassistant__option-btn" onClick={handleOpenModal}>
+                                Comprar monedas
                             </button>
                         </div>
                     ) : m.type === 'confirm' ? (
@@ -249,7 +262,7 @@ export default function AIChat() {
                         </div>
                     )
                 )}
-                <div ref={chatEndRef} />
+                <div ref={chatEndRef}/>
             </div>
 
             <div className="aiassistant__input-wrapper">
