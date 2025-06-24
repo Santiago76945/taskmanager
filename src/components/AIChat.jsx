@@ -238,8 +238,11 @@ export default function AIChat() {
                 {messages.map((m, i) =>
                     m.type === 'options' ? (
                         <div key={i} className="aiassistant__options">
-                            <button className="aiassistant__option-btn" onClick={handleOpenModal}>
-                                Comprar monedas
+                            <button className="aiassistant__option-btn" onClick={() => chooseOption('query')}>
+                                Necesito saber algo sobre mis tareas
+                            </button>
+                            <button className="aiassistant__option-btn" onClick={() => chooseOption('add')}>
+                                Necesito añadas una tarea por mí
                             </button>
                         </div>
                     ) : m.type === 'confirm' ? (

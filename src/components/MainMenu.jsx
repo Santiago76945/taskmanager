@@ -7,6 +7,7 @@ import logoAndText from '../assets/logo-and-text.png'
 import logoAndTextDark from '../assets/logo-and-text-dark-mode.png'
 import Popup from './Popup'
 import AdBanner from './AdBanner'
+import DeactivateAdsModal from './DeactivateAdsModal'
 import * as api from '../services/api'
 
 export default function MainMenu() {
@@ -18,6 +19,9 @@ export default function MainMenu() {
     const [inputText, setInputText] = useState('')
     const [confirmError, setConfirmError] = useState('')
     const [confirmSuccess, setConfirmSuccess] = useState('')
+
+    // nuevo estado para el modal de Desactivar Ads
+    const [deactivateOpen, setDeactivateOpen] = useState(false)
 
     // Estadísticas dinámicas
     const [weekCount, setWeekCount] = useState(0)
@@ -188,7 +192,7 @@ export default function MainMenu() {
                     </button>
                     <button
                         className="mainmenu__action-button"
-                        onClick={() => { /* futura funcionalidad Premium */ }}
+                        onClick={() => setDeactivateOpen(true)}
                     >
                         Desactivar Ads
                     </button>
@@ -232,6 +236,12 @@ export default function MainMenu() {
                     </div>
                 </Popup>
             </main>
+
+            {/* Modal de Desactivar Ads */}
+            <DeactivateAdsModal
+                visible={deactivateOpen}
+                onClose={() => setDeactivateOpen(false)}
+            />
         </>
     )
 }
