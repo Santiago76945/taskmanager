@@ -20,7 +20,7 @@ const TaskSchema = new Schema({
     observation: String,
     details: String,
     completedAt: Date,
-    tag: String 
+    tag: String
 }, { timestamps: true })
 
 module.exports = mongoose.models.Task || model('Task', TaskSchema)

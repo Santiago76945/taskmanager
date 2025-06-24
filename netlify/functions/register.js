@@ -1,7 +1,7 @@
 // netlify/functions/register.js
 
 require('dotenv').config()
-const bcrypt = require('bcrypt')       // o bcryptjs
+const bcrypt = require('bcrypt')
 const { connectToDB } = require('./dbConnection')
 const User = require('./models/User')
 
@@ -38,14 +38,22 @@ exports.handler = async (event) => {
         const salt = await bcrypt.genSalt(10)
         const hash = await bcrypt.hash(password, salt)
 
-        // ← Uso correcto del campo definido en tu esquema:
-        await new User({ username, passwordHash: hash, code }).save()
+        // Creamos el usuario con demiCoins inicial en 0 (por defecto)
+        const newUser = new User({
+            username,
+            passwordHash: hash,
+            code,
+            demiCoins: 0
+        })
+        await newUser.save()
 
         return {
             statusCode: 201,
-            body: JSON.stringify({ msg: 'Usuario registrado correctamente' })
+            body: JSON.stringify({
+                msg: 'Usuario registrado correctamente',
+                demiCoins: newUser.demiCoins
+            })
         }
-
     } catch (error) {
         console.error('❌ Error en register:', error)
         return {

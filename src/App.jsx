@@ -9,7 +9,7 @@ import Menu from './routes/Menu'
 import TaskListRoute from './routes/TaskList'
 import ImportRoute from './routes/Import'
 import ExportRoute from './routes/Export'
-// (luego aquí irían CreateRoute, etc.)
+import AIChatRoute from './routes/AIChat'
 
 export default function App() {
     const { token } = useContext(AuthContext)
@@ -39,8 +39,8 @@ export default function App() {
                 {/* Sección Exportar tareas */}
                 <Route path="export" element={<ExportRoute />} />
 
-                {/* Otras secciones */}
-                {/* <Route path="create" element={<CreateRoute />} /> */}
+                {/* Sección Demetria AI */}
+                <Route path="ai" element={<AIChatRoute />} />
             </Route>
 
             {/* Cualquier otra ruta → login */}

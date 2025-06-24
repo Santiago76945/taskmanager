@@ -153,7 +153,7 @@ export default function ImportTasks() {
                     </li>
                     <li>
                         <code>status</code> <strong>(string, obligatorio)</strong>:{' '}
-                        <em>nueva</em> · <em>no comenzada</em> · <em>comenzada</em> ·{' '}
+                        <em>no comenzada</em> · <em>comenzada</em> ·{' '}
                         <em>estancada</em> · <em>finalizada</em>
                     </li>
                     <li>
@@ -199,7 +199,7 @@ export default function ImportTasks() {
                 <p>Ejemplo múltiples tareas:</p>
                 <pre className="card-nested">
                     {`[
-  { "title": "Pagar impuestos", "status": "nueva", "deadline": "2025-05-28T12:00:00Z", "tag": "personal" },
+  { "title": "Pagar impuestos", "status": "no comenzada", "deadline": "2025-05-28T12:00:00Z", "tag": "personal" },
   { "title": "Enviar CV", "status": "comenzada", "deadline": "2025-05-30T09:00:00Z", "priority": "media", "tag": "otro" }
 ]`}
                 </pre>

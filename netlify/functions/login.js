@@ -47,7 +47,8 @@ exports.handler = async (event) => {
             // NO imprimas user.passwordHash en producción, es sólo debug
             passwordHash: user.passwordHash,
             code: user.code,
-            createdAt: user.createdAt
+            createdAt: user.createdAt,
+            demiCoins: user.demiCoins
         })
 
         console.log('4) Comparando password con hash...')
@@ -64,17 +65,20 @@ exports.handler = async (event) => {
         }
         console.log('✅ Contraseña válida')
 
-        console.log('5) Generando JWT...')
+        console.log('5) Generando JWT con demiCoins...')
         const token = jwt.sign(
-            { userId: user._id },
+            { userId: user._id, demiCoins: user.demiCoins },
             process.env.JWT_SECRET
         )
         console.log('🔑 Token generado:', token)
 
-        console.log('6) Respondiendo con token')
+        console.log('6) Respondiendo con token y saldo de Demi Coins')
         return {
             statusCode: 200,
-            body: JSON.stringify({ token })
+            body: JSON.stringify({
+                token,
+                demiCoins: user.demiCoins
+            })
         }
 
     } catch (err) {

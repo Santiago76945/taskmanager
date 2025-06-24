@@ -162,22 +162,40 @@ export default function MainMenu() {
                 </section>
 
                 <nav className="mainmenu__actions">
-                    <button className="mainmenu__action-button" onClick={() => navigate('/dashboard/tasks')}>
+                    <button
+                        className="mainmenu__action-button"
+                        onClick={() => navigate('/dashboard/tasks')}
+                    >
                         Mis tareas
                     </button>
-                    <button className="mainmenu__action-button" onClick={() => navigate('/dashboard/import')}>
+                    <button
+                        className="mainmenu__action-button"
+                        onClick={() => navigate('/dashboard/import')}
+                    >
                         Importar tareas
                     </button>
-                    <button className="mainmenu__action-button" onClick={() => navigate('/dashboard/export')}>
+                    <button
+                        className="mainmenu__action-button"
+                        onClick={() => navigate('/dashboard/export')}
+                    >
                         Exportar tareas
                     </button>
-                    <button className="mainmenu__action-button" onClick={() => { /* futura funcionalidad AI */ }}>
+                    <button
+                        className="mainmenu__action-button"
+                        onClick={() => navigate('/dashboard/ai')}
+                    >
                         Demetria: Asistente AI
                     </button>
-                    <button className="mainmenu__action-button" onClick={() => { /* futura funcionalidad Premium */ }}>
+                    <button
+                        className="mainmenu__action-button"
+                        onClick={() => { /* futura funcionalidad Premium */ }}
+                    >
                         Desactivar Ads
                     </button>
-                    <button className="mainmenu__action-button" onClick={openConfirm}>
+                    <button
+                        className="mainmenu__action-button"
+                        onClick={openConfirm}
+                    >
                         Borrar todas mis tareas
                     </button>
                 </nav>

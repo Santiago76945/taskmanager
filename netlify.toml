@@ -7,6 +7,16 @@
 [functions]
   directory = "netlify/functions"
 
+[build.environment]
+  # Clave de OpenAI para las Lambdas de IA
+  OPENAI_API_KEY   = "${OPENAI_API_KEY}"
+  # Cuántas monedas (Demi Coins) vale cada token de uso
+  COINS_PER_TOKEN  = "0.1"
+  # ya tenías otras vars:
+  MONGODB_URI      = "${MONGODB_URI}"
+  JWT_SECRET       = "${JWT_SECRET}"
+  AUTH_CODE        = "${AUTH_CODE}"
+
 [dev]
   command    = "npm run dev"
   targetPort = 3000

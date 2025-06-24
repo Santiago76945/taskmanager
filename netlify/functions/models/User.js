@@ -9,7 +9,8 @@ const UserSchema = new Schema({
     passwordHash: { type: String },                  // ya no es required
     code: String,
     streak: { type: Number, default: 0 },
-    lastUpdated: Date
+    lastUpdated: Date,
+    demiCoins: { type: Number, default: 0 }          // saldo de Demi Coins para consultas AI
 }, { timestamps: true });
 
 // Índice único sobre userId, pero solo para documentos donde userId es distinto de null

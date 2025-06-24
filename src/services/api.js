@@ -64,3 +64,18 @@ export const getStreak = () =>
 
 export const updateStreak = ({ reset }) =>
     apiClient.post('/streak', { reset });
+
+// AI endpoints
+export const aiQuery = (prompt) =>
+    apiClient.post('/aiQuery', { prompt });
+
+export const aiAddTask = (taskPayload) =>
+    apiClient.post('/aiAddTask', taskPayload);
+
+// Comprar Demi Coins (solo testing +100)
+export const addCoins = () =>
+    apiClient.post('/addCoins', { amount: 100 });
+
+// Perfil de usuario
+export const getProfile = () =>
+    apiClient.get('/me');
