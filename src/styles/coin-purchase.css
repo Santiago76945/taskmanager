@@ -1,0 +1,195 @@
+/* src/styles/coin-purchase.css */
+
+/* 1. Body blanco */
+body {
+    background-color: var(--color-bg);
+}
+
+/* 2. Overlay semitransparente */
+.popup-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-xl);
+    z-index: 1000;
+}
+
+/* 3. Tarjeta principal */
+.popup-card {
+    position: relative;
+    width: 100%;
+    max-width: 640px;
+    background: var(--color-surface);
+    border-radius: var(--border-radius);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    padding: var(--spacing-xl);
+    font-family: var(--font-sans);
+    color: var(--color-text);
+    line-height: 1.6;
+}
+
+/* 4. Cabecera */
+.popup-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+.popup-header h3 {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-text);
+}
+
+/* 5. Botón de cierre en esquina */
+.popup-close-btn {
+    position: absolute;
+    top: var(--spacing-md);
+    right: var(--spacing-md);
+    width: 2rem;
+    height: 2rem;
+    background: var(--color-bg);
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    font-size: 1.25rem;
+    line-height: 1;
+    color: var(--color-text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.popup-close-btn:hover {
+    background: var(--color-destructive);
+    color: #fff;
+    transform: scale(1.1);
+}
+
+/* 6. Subtítulo */
+.coin-purchase-subtitle {
+    text-align: center;
+    margin: 0 0 var(--spacing-lg);
+    color: var(--color-text-muted);
+    font-size: 1rem;
+}
+
+/* 7. Cuerpo y grid de paquetes */
+.coin-purchase-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xl);
+}
+
+.coin-packages {
+    display: flex;
+    width: 100%;
+    gap: var(--spacing-md);
+}
+
+/* 8. Cada paquete */
+.coin-package {
+    flex: 1;
+    background: var(--color-bg);
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.coin-package:hover {
+    transform: scale(1.03);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.coin-package img {
+    width: 100px;
+    height: auto;
+}
+
+/* 9. Label y precio */
+.coin-package-label {
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: var(--color-text);
+}
+
+.coin-package-price {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--color-secondary);
+}
+
+/* 10. Botón “Obtener” */
+.coin-package-btn {
+    margin-top: auto;
+    background: var(--color-accent);
+    border: none;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--border-radius-lg);
+    cursor: pointer;
+    font-weight: 700;
+    color: var(--color-bg);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.coin-package-btn:hover {
+    background: var(--color-primary-hover);
+    transform: translateY(-2px);
+}
+
+/* 11. Botón “Cerrar” inferior – fondo sólido congruente */
+.coin-package-exit {
+    background: var(--color-secondary);
+    color: var(--color-bg);
+    border: none;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.coin-package-exit:hover {
+    background: var(--color-primary-hover);
+    transform: translateY(-1px);
+}
+
+/* 9. Label y precio */
+.coin-package-label {
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: var(--color-text);
+}
+
+.coin-package-price {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--color-secondary);
+}
+
+/* 12. Asegurar centrado de texto en etiquetas */
+.coin-package-label,
+.coin-package-price {
+    width: 100%;
+    text-align: center;
+}
