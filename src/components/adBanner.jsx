@@ -1,7 +1,6 @@
 // src/components/AdBanner.jsx
 
 import React, { useState, useEffect } from 'react'
-import '../styles/adbanner.css'  // moved all inline styles here
 
 // Importa aquí todas las configuraciones de anuncios y sus imágenes
 import ad1Config from '../ads/super-luckys-adventure/config.json'
