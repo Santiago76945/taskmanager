@@ -1,3 +1,5 @@
+// src/services/api.js
+
 import axios from 'axios';
 
 const API_ROOT = import.meta.env.VITE_API_URL || '/.netlify/functions';
@@ -63,19 +65,19 @@ export const getStreak = () =>
 export const updateStreak = ({ reset }) =>
     apiClient.post('/streak', { reset });
 
-// AI endpoints
-export const aiQuery = (prompt) =>
-    apiClient.post('/aiQuery', { prompt });
+// AI endpoints — ahora recibimos y enviamos el payload tal cual
+export const aiQuery = payload =>
+    apiClient.post('/aiQuery', payload);
 
-export const aiAddTask = (taskPayload) =>
-    apiClient.post('/aiAddTask', taskPayload);
+export const aiAddTask = payload =>
+    apiClient.post('/aiAddTask', payload);
 
 // Preview AI cost endpoints (no side effects)
-export const previewQuery = (prompt) =>
-    apiClient.post('/aiQuery?preview=true', { prompt });
+export const previewQuery = payload =>
+    apiClient.post('/aiQuery?preview=true', payload);
 
-export const previewAddTask = (taskPayload) =>
-    apiClient.post('/aiAddTask?preview=true', taskPayload);
+export const previewAddTask = payload =>
+    apiClient.post('/aiAddTask?preview=true', payload);
 
 // Comprar Demi Coins (solo testing +100)
 export const addCoins = () =>
@@ -84,3 +86,4 @@ export const addCoins = () =>
 // Perfil de usuario
 export const getProfile = () =>
     apiClient.get('/me');
+

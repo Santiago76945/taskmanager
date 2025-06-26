@@ -14,11 +14,6 @@ const ADS = [
   // { config: ad2Config, image: ad2Image },
 ]
 
-/**
- * AdBanner: muestra un anuncio con probabilidad 1/5 al montar,
- * con cuenta regresiva para omitir, botón de "Más información" y "Desactivar Ads".
- * Ahora acepta un callback `onRequestDisableAds` para abrir el modal desde MainMenu.
- */
 export default function AdBanner({ onRequestDisableAds }) {
   const [show, setShow] = useState(false)
   const [count, setCount] = useState(5)
@@ -50,10 +45,8 @@ export default function AdBanner({ onRequestDisableAds }) {
 
   const handleDisable = () => {
     if (typeof onRequestDisableAds === 'function') {
-      // invoca el modal centralizado
       onRequestDisableAds()
     } else {
-      // fallback: desactiva directamente
       localStorage.setItem('adsDisabled', 'true')
       setAdsDisabled(true)
       setShow(false)
@@ -72,38 +65,109 @@ export default function AdBanner({ onRequestDisableAds }) {
   const imageUrl = ad.image
 
   return (
-    <div className="adbanner-overlay">
-      <div className="adbanner-container">
-        <div className="adbanner-header">Publicidad:</div>
-        <div className="adbanner-title">{title}</div>
-        <img className="adbanner-image" src={imageUrl} alt={title} />
-        <div className="adbanner-body">{body}</div>
-        <div className="adbanner-buttons">
-          <button
-            className="adbanner-button adbanner-skip"
-            onClick={handleSkip}
-            disabled={count > 0}
-          >
-            {count > 0
-              ? `Espera ${count} segundo${count !== 1 ? 's' : ''}`
-              : 'Omitir'}
-          </button>
-          {link && (
+    <>
+      {/* CSS embebido para AdBanner */}
+      <style>{`
+        .adbanner-overlay {
+          position: fixed;
+          top: 0; left: 0; right: 0; bottom: 0;
+          background: rgba(0,0,0,0.6);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 1000;
+        }
+        .adbanner-container {
+          background: #fff;
+          border-radius: 8px;
+          max-width: 90%;
+          width: 400px;
+          padding: 16px;
+          text-align: center;
+          box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        }
+        .adbanner-header {
+          font-size: 0.9rem;
+          color: #888;
+          margin-bottom: 8px;
+        }
+        .adbanner-title {
+          font-size: 1.25rem;
+          font-weight: bold;
+          margin-bottom: 12px;
+        }
+        .adbanner-image {
+          width: 100%;
+          height: auto;
+          border-radius: 4px;
+          margin-bottom: 12px;
+        }
+        .adbanner-body {
+          font-size: 1rem;
+          color: #333;
+          margin-bottom: 16px;
+        }
+        .adbanner-buttons {
+          display: flex;
+          gap: 8px;
+          justify-content: center;
+        }
+        .adbanner-button {
+          flex: 1;
+          padding: 8px 12px;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 0.95rem;
+        }
+        .adbanner-skip,
+        .adbanner-disable {
+          background: #ddd;
+          color: #333;
+        }
+        .adbanner-skip:disabled {
+          opacity: 0.6;
+          cursor: default;
+        }
+        .adbanner-moreinfo {
+          background: #007bff;
+          color: #fff;
+        }
+      `}</style>
+
+      <div className="adbanner-overlay">
+        <div className="adbanner-container">
+          <div className="adbanner-header">Publicidad:</div>
+          <div className="adbanner-title">{title}</div>
+          <img className="adbanner-image" src={imageUrl} alt={title} />
+          <div className="adbanner-body">{body}</div>
+          <div className="adbanner-buttons">
             <button
-              className="adbanner-button adbanner-moreinfo"
-              onClick={handleMoreInfo}
+              className="adbanner-button adbanner-skip"
+              onClick={handleSkip}
+              disabled={count > 0}
             >
-              Más información
+              {count > 0
+                ? `Espera ${count} segundo${count !== 1 ? 's' : ''}`
+                : 'Omitir'}
             </button>
-          )}
-          <button
-            className="adbanner-button adbanner-disable"
-            onClick={handleDisable}
-          >
-            Desactivar Ads
-          </button>
+            {link && (
+              <button
+                className="adbanner-button adbanner-moreinfo"
+                onClick={handleMoreInfo}
+              >
+                Más información
+              </button>
+            )}
+            <button
+              className="adbanner-button adbanner-disable"
+              onClick={handleDisable}
+            >
+              Desactivar Ads
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }

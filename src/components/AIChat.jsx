@@ -4,7 +4,6 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
     getProfile,
-    getTasks,
     aiQuery,
     aiAddTask,
     previewQuery,
@@ -86,13 +85,18 @@ export default function AIChat() {
         setQueuedInput(userText)
         setInput('')
 
-        let cost
-        if (mode === 'query') {
-            const { data } = await previewQuery({ prompt: userText })
-            cost = data.actualCost
-        } else {
-            const { data } = await previewAddTask({ instruction: userText })
-            cost = data.actualCost
+        // ⚡ Llamamos al preview en el servidor, que ya cuenta tokens y aplica COINS_PER_TOKEN
+        let cost = 0
+        try {
+            if (mode === 'query') {
+                const { data } = await previewQuery({ prompt: userText })
+                cost = data.actualCost
+            } else {
+                const { data } = await previewAddTask({ instruction: userText })
+                cost = data.actualCost
+            }
+        } catch {
+            cost = 0
         }
 
         setPendingCost(cost)
@@ -118,7 +122,7 @@ export default function AIChat() {
             return
         }
 
-        // mostrar el mensaje del usuario
+        // Mostrar el mensaje del usuario
         setMessages(ms => [...ms, { from: 'user', text: queuedInput }])
         const instruction = queuedInput
         setPendingCost(null)
@@ -170,11 +174,14 @@ export default function AIChat() {
     }
 
     const handleOpenModal = () => setModalVisible(true)
+
     const handlePurchase = async (amount) => {
         try {
             const res = await addCoins(amount)
             setCoins(res.data.demiCoins)
+            setMessages(ms => ms.filter(m => m.type !== 'options'))
             await pushBot(`✔️ Has comprado ${amount} Demi Coins.`)
+            showOptions()
         } catch {
             await pushBot('❌ No se pudo completar la compra. Inténtalo de nuevo.')
         } finally {
