@@ -14,7 +14,7 @@ exports.handler = async (event) => {
         return { statusCode: 405, body: 'Method Not Allowed' }
     }
 
-    // — conectar a MongoDB
+    // — Conectar a MongoDB
     try {
         await connectToDB()
     } catch (dbErr) {
@@ -28,7 +28,7 @@ exports.handler = async (event) => {
         }
     }
 
-    // — verificar JWT
+    // — Verificar JWT
     const auth = event.headers.authorization
     if (!auth) {
         return { statusCode: 401, body: 'No autorizado' }
@@ -42,14 +42,18 @@ exports.handler = async (event) => {
     }
     const userId = payload.userId
 
-    // — cargar usuario
+    // — Cargar usuario y saldo
     const user = await User.findById(userId)
     if (!user) {
         return { statusCode: 404, body: 'Usuario no encontrado' }
     }
 
-    // — comprobar saldo mínimo estimado
-    const coinsPerToken = parseFloat(process.env.COINS_PER_TOKEN) || 0
+    // — Lectura unificada del factor coinsPerToken
+    const coinsPerToken = parseFloat(
+        process.env.COINS_PER_TOKEN ?? process.env.VITE_COINS_PER_TOKEN
+    ) || 0
+
+    // — Comprobar saldo mínimo estimado
     const EST_TOKENS = 10
     const costEst = EST_TOKENS * coinsPerToken
     if (user.demiCoins < costEst) {
@@ -62,7 +66,7 @@ exports.handler = async (event) => {
         }
     }
 
-    // — parsear body
+    // — Parsear body
     let body
     try {
         body = JSON.parse(event.body)
@@ -84,22 +88,23 @@ exports.handler = async (event) => {
         }
     }
 
-    // — preparar prompt (especificar enums permitidos)
+    // — Preparar prompt para OpenAI
     const systemPrompt = [
         `Eres Demetria, el asistente de tareas. A partir de la solicitud del usuario debes generar un objeto JSON con la nueva tarea.`,
-        `Solo incluye las claves: title, status, deadline, priority, location, assignedBy, recommendedDate, creationDate, depends, dependsOn, stalledReason, observation, details, tag.`,
-        `Para "status" usa uno de: "no comenzada", "comenzada", "estancada", "finalizada".`,
-        `Para "priority" usa uno de: "baja", "media", "alta".`,
-        `Campos de fecha (deadline, recommendedDate, creationDate) en formato ISO 8601.`,
-        `Devuelve únicamente el JSON, sin texto adicional.`
+        `Solo incluye estas claves: title, status, deadline, priority, location, assignedBy, recommendedDate, creationDate, observation, details, tag.`,
+        `Si status falta, lo pondrás como "no comenzada".`,
+        `Para status usa uno de: "no comenzada", "comenzada", "estancada", "finalizada".`,
+        `Para priority usa uno de: "baja", "media", "alta".`,
+        `Para tag, intenta seleccionar "personal" o "laboral" según el contexto; solo si el usuario lo menciona explícitamente, utiliza otro valor.`,
+        `Los campos de fecha (deadline, recommendedDate, creationDate) deben ir en formato ISO 8601.`,
+        `Devuelve únicamente el objeto JSON, sin texto adicional.`
     ].join(' ')
-
     const messages = [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: instruction }
     ]
 
-    // — llamar a OpenAI con GPT-4o
+    // — Llamada a OpenAI
     let resp
     try {
         resp = await openai.chat.completions.create({
@@ -117,10 +122,21 @@ exports.handler = async (event) => {
         }
     }
 
-    let content = resp.choices?.[0]?.message?.content || ''
-    console.log('Respuesta IA cruda:', content)
+    // — Calcular coste real
+    const usedTokens = resp.usage?.total_tokens ?? EST_TOKENS
+    const actualCost = usedTokens * coinsPerToken
 
-    // — extraer sólo lo que está dentro de la primera '{' y la última '}'
+    // — Modo preview: devolver coste sin crear ni descontar
+    const isPreview = event.queryStringParameters?.preview === 'true'
+    if (isPreview) {
+        return {
+            statusCode: 200,
+            body: JSON.stringify({ actualCost, usedTokens, coinsPerToken })
+        }
+    }
+
+    // — Extraer JSON de la respuesta
+    const content = resp.choices[0].message.content
     const first = content.indexOf('{')
     const last = content.lastIndexOf('}')
     if (first === -1 || last === -1) {
@@ -134,12 +150,12 @@ exports.handler = async (event) => {
     }
     const jsonString = content.slice(first, last + 1)
 
-    // — parsear JSON extraído
+    // — Parsear y aplicar defaults
     let taskData
     try {
         taskData = JSON.parse(jsonString)
     } catch (jsonErr) {
-        console.error('Error parseando JSON extraído:', jsonErr, jsonString)
+        console.error('Error parseando JSON extraído:', jsonErr)
         return {
             statusCode: 500,
             body: JSON.stringify({
@@ -148,34 +164,23 @@ exports.handler = async (event) => {
             })
         }
     }
+    if (!taskData.status) taskData.status = 'no comenzada'
 
-    // — crear tarea en MongoDB
-    let newTask
-    try {
-        newTask = new Task({ userId, ...taskData })
-        await newTask.save()
-    } catch (dbSaveErr) {
-        console.error('Error guardando tarea:', dbSaveErr)
-        return {
-            statusCode: 500,
-            body: JSON.stringify({
-                msg: 'Error guardando la tarea',
-                error: dbSaveErr.message
-            })
-        }
-    }
-
-    // — descontar monedas según uso real
-    const usedTokens = resp.usage?.total_tokens ?? EST_TOKENS
-    user.demiCoins -= usedTokens * coinsPerToken
+    // — Crear tarea y descontar monedas
+    const newTask = new Task({ userId, ...taskData })
+    await newTask.save()
+    user.demiCoins -= actualCost
     await user.save()
 
-    // — responder con la nueva tarea y saldo actualizado
+    // — Responder con tarea y saldo
     return {
         statusCode: 201,
         body: JSON.stringify({
             task: newTask,
-            demiCoins: user.demiCoins
+            demiCoins: user.demiCoins,
+            usedTokens,
+            coinsPerToken,
+            actualCost
         })
     }
 }

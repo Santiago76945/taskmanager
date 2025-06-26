@@ -1,10 +1,5 @@
 /* src/styles/coin-purchase.css */
 
-/* 1. Fondo degradado más sutil */
-body {
-    background: linear-gradient(to bottom, #ffffff, #d4fcd2);
-}
-
 /* 2. Overlay semitransparente para modal de compra */
 .popup-overlay-coin-purchase-modal {
     position: fixed;
@@ -231,3 +226,14 @@ body {
     margin: var(--spacing-lg) auto 0;
 }
 
+/* ==== Dark-mode fixes para IA feature-containers ==== */
+:root.dark .feature-container {
+  background: var(--color-bg);               /* mismo gris oscuro de las tarjetas */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);   /* sombra más marcada en oscuro */
+}
+
+:root.dark .feature-container h4,
+:root.dark .feature-container p,
+:root.dark .feature-container li {
+  color: var(--color-text);                  /* texto claro sobre fondo oscuro */
+}

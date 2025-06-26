@@ -2,7 +2,15 @@
 
 import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import * as api from '../services/api'
+import {
+    getProfile,
+    getTasks,
+    aiQuery,
+    aiAddTask,
+    previewQuery,
+    previewAddTask,
+    addCoins,
+} from '../services/api'
 import demiIcon from '../assets/demi-coin.png'
 import demiProfile from '../assets/demetria-profile.png'
 import CoinPurchaseModal from './CoinPurchaseModal'
@@ -21,47 +29,37 @@ export default function AIChat() {
     const [isModalVisible, setModalVisible] = useState(false)
     const chatEndRef = useRef(null)
 
-    // Al montar, traemos el saldo real
+    // Traer saldo al montar
     useEffect(() => {
-        api.getProfile()
+        getProfile()
             .then(res => setCoins(res.data.demiCoins))
             .catch(() => setCoins(0))
     }, [])
 
-    // Auto-scroll al final del chat
+    // Auto-scroll
     useEffect(() => {
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
     }, [messages])
 
-    // Simula “escribiendo…”
     const pushBot = async (text) => {
-        setMessages(msgs => [...msgs, { from: 'bot', text: '', typing: true }])
+        setMessages(ms => [...ms, { from: 'bot', text: '', typing: true }])
         await new Promise(r => setTimeout(r, 800))
-        setMessages(msgs =>
-            msgs.map(m => m.typing ? { from: 'bot', text, typing: false } : m)
-        )
+        setMessages(ms => ms.map(m => m.typing ? { from: 'bot', text, typing: false } : m))
     }
 
-    // Mostrar opciones iniciales
     const showOptions = () => {
         setMode(null)
-        setMessages(msgs => [
-            ...msgs,
-            { from: 'bot', type: 'options' }
-        ])
+        setMessages(ms => [...ms, { from: 'bot', type: 'options' }])
     }
 
-    // Manejar elección de modo
     const chooseOption = async (selectedMode) => {
         const userText = selectedMode === 'query'
             ? 'Necesito saber algo sobre mis tareas'
             : 'Necesito añadas una tarea por mí'
         setMode(selectedMode)
-        setMessages(msgs =>
-            msgs.filter(m => m.type !== 'options')
-                .concat({ from: 'user', text: userText })
+        setMessages(ms =>
+            ms.filter(m => m.type !== 'options').concat({ from: 'user', text: userText })
         )
-
         if (selectedMode === 'add') {
             await pushBot(
                 'Perfecto! Contame todo lo relevante sobre la tarea que querés crear y sobre todo no olvides la fecha límite. ' +
@@ -72,17 +70,11 @@ export default function AIChat() {
         }
     }
 
-    // Estimación de coste (1 coin ≈ 10 tokens)
-    const estimateCost = (text, tasksJson) => {
-        const tokens = Math.ceil((text.length + tasksJson.length) / 4)
-        return Math.max(1, Math.ceil(tokens / 10))
-    }
-
-    // Paso 1: enviar mensaje y pedir confirmación de coste
+    // Paso 1: preview de coste real
     const handleSend = async () => {
         if (!mode) {
-            setMessages(msgs => [
-                ...msgs,
+            setMessages(ms => [
+                ...ms,
                 { from: 'bot', text: 'Por favor, primero elige una de las siguientes opciones:', typing: false },
                 { from: 'bot', type: 'options' }
             ])
@@ -94,27 +86,26 @@ export default function AIChat() {
         setQueuedInput(userText)
         setInput('')
 
-        let tasksJson = ''
+        let cost
         if (mode === 'query') {
-            const res = await api.getTasks()
-            tasksJson = JSON.stringify(res.data)
+            const { data } = await previewQuery({ prompt: userText })
+            cost = data.actualCost
+        } else {
+            const { data } = await previewAddTask({ instruction: userText })
+            cost = data.actualCost
         }
 
-        const cost = estimateCost(userText, tasksJson)
         setPendingCost(cost)
-
-        setMessages(msgs => [
-            ...msgs,
+        setMessages(ms => [
+            ...ms,
             { from: 'bot', type: 'cost', text: `Tu consulta tendrá un costo aproximado de ${cost.toFixed(2)} Demi Coins. ¿Quieres proseguir?`, typing: false },
             { from: 'bot', type: 'confirm' }
         ])
     }
 
-    // Paso 2: confirmar o cancelar la operación
+    // Paso 2: confirmar o cancelar
     const handleConfirm = async (confirm) => {
-        // Limpiar prompts de coste y confirmación
-        setMessages(msgs => msgs.filter(m => m.type !== 'confirm' && m.type !== 'cost'))
-
+        setMessages(ms => ms.filter(m => m.type !== 'confirm' && m.type !== 'cost'))
         if (!confirm) {
             setPendingCost(null)
             setQueuedInput(null)
@@ -127,83 +118,61 @@ export default function AIChat() {
             return
         }
 
-        // Mostrar mensaje del usuario
-        setMessages(msgs => [...msgs, { from: 'user', text: queuedInput }])
-        let instruction = queuedInput
+        // mostrar el mensaje del usuario
+        setMessages(ms => [...ms, { from: 'user', text: queuedInput }])
+        const instruction = queuedInput
         setPendingCost(null)
         setQueuedInput(null)
 
         if (mode === 'query') {
             try {
-                const res = await api.aiQuery(instruction)
+                const res = await aiQuery({ prompt: instruction })
                 setCoins(res.data.demiCoins)
                 await pushBot(res.data.reply)
             } catch (err) {
-                console.error('Error al crear consulta:', err)
-                const msg = err.response?.data?.msg
-                    || err.response?.data
-                    || err.message
-                    || 'Error desconocido'
+                const msg = err.response?.data?.msg || err.message || 'Error desconocido'
                 await pushBot(`❌ No pude crear la consulta: ${msg}`)
             }
-
         } else {
             try {
-                // --- INYECCIÓN DE FECHA LOCAL EN EL PROMPT ---
                 const ahora = new Date()
-                const fechaParte = ahora.toLocaleDateString('es-AR', {
-                    day: 'numeric', month: 'long', year: 'numeric'
-                })
-                const horaParte = ahora.toLocaleTimeString('es-AR', {
-                    hour: '2-digit', minute: '2-digit'
-                })
-                const instruccionConFecha = `(Fecha actual: ${fechaParte} ${horaParte}). ${instruction}`
+                const fecha = ahora.toLocaleDateString('es-AR', { day: 'numeric', month: 'long', year: 'numeric' })
+                const hora = ahora.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })
+                const instrWithDate = `(Fecha actual: ${fecha} ${hora}). ${instruction}`
 
-                const res = await api.aiAddTask({ instruction: instruccionConFecha })
+                const res = await aiAddTask({ instruction: instrWithDate })
+                setCoins(res.data.demiCoins)
+
                 let task = res.data.task
                 if (!task.status) task.status = 'no comenzada'
                 if (!task.deadline) {
-                    const d = new Date()
-                    d.setDate(d.getDate() + 7)
+                    const d = new Date(); d.setDate(d.getDate() + 7)
                     task.deadline = d.toISOString()
                 }
-                setCoins(res.data.demiCoins)
 
-                // Formatear fecha límite en español
-                const fechaFormateada = new Date(task.deadline)
-                    .toLocaleString('es-AR', {
-                        day: 'numeric',
-                        month: 'long',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    })
+                const formatted = new Date(task.deadline).toLocaleString('es-AR', {
+                    day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                })
 
                 await pushBot(
                     `✅ Tarea creada:\n` +
                     `• Título: ${task.title}\n` +
                     `• Estado: ${task.status}\n` +
-                    `• Fecha límite: ${fechaFormateada}`
+                    `• Fecha límite: ${formatted}`
                 )
             } catch {
                 await pushBot('❌ Error al crear la tarea. Intenta de nuevo.')
             }
         }
 
-        // Ofrecer nueva acción
         await pushBot('¿Necesitas algo más?')
         showOptions()
     }
 
-    // Mostrar modal de compra
-    const handleOpenModal = () => {
-        setModalVisible(true)
-    }
-
-    // Procesar compra desde el modal
+    const handleOpenModal = () => setModalVisible(true)
     const handlePurchase = async (amount) => {
         try {
-            const res = await api.addCoins(amount)
+            const res = await addCoins(amount)
             setCoins(res.data.demiCoins)
             await pushBot(`✔️ Has comprado ${amount} Demi Coins.`)
         } catch {
@@ -265,7 +234,7 @@ export default function AIChat() {
                         </div>
                     )
                 )}
-                <div ref={chatEndRef}/>
+                <div ref={chatEndRef} />
             </div>
 
             <div className="aiassistant__input-wrapper">

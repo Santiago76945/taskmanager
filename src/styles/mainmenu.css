@@ -146,3 +146,9 @@
     align-items: center;
     gap: var(--spacing-md);
 }
+
+/* ==== Fix toggle contrast sólo en dark mode ==== */
+:root.dark .mainmenu__header .theme-switch input:checked+.slider::before {
+    /* cuando esté marcado (dark mode on), pon el thumb en color-bg (oscuro) */
+    background-color: var(--color-bg);
+}

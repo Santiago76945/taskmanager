@@ -4,7 +4,8 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-    margin: var(--spacing-md);               /* márgenes alrededor */
+    margin: var(--spacing-md);
+    /* márgenes alrededor */
     background: var(--color-surface);
     border-radius: var(--border-radius-lg);
     overflow: hidden;
@@ -110,6 +111,7 @@
     cursor: pointer;
     transition: background 0.2s;
 }
+
 .aiassistant__option-btn:hover {
     opacity: 0.9;
 }
@@ -119,6 +121,7 @@
         opacity: 0;
         transform: translateY(8px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -149,4 +152,60 @@
     border: none;
     border-radius: var(--border-radius);
     cursor: pointer;
+}
+
+
+/* -----------------------------------
+   Chat AI – overrides para dark mode
+   ----------------------------------- */
+:root.dark .aiassistant__container {
+    background: var(--color-card-bg);
+    /* gris oscuro uniforme */
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+:root.dark .aiassistant__header {
+    background: var(--color-card-bg);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+:root.dark .aiassistant__message--bot {
+    background: var(--color-bg);
+    /* muy oscuro */
+    color: var(--color-text);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+:root.dark .aiassistant__message--user {
+    background: var(--color-primary-hover);
+    /* púrpura suave */
+    color: var(--color-bg);
+    /* casi blanco */
+}
+
+:root.dark .aiassistant__option-btn {
+    background: transparent;
+    color: var(--color-primary);
+    border: 1px solid var(--color-primary);
+}
+
+:root.dark .aiassistant__option-btn:hover {
+    background: var(--color-primary);
+    color: var(--color-bg);
+}
+
+:root.dark .aiassistant__input-wrapper {
+    background: var(--color-card-bg);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+:root.dark .aiassistant__input {
+    background: var(--color-bg);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--color-text);
+}
+
+:root.dark .aiassistant__send-btn {
+    background: var(--color-primary);
+    color: var(--color-bg);
 }

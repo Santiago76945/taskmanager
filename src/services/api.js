@@ -1,5 +1,3 @@
-// src/services/api.js
-
 import axios from 'axios';
 
 const API_ROOT = import.meta.env.VITE_API_URL || '/.netlify/functions';
@@ -71,6 +69,13 @@ export const aiQuery = (prompt) =>
 
 export const aiAddTask = (taskPayload) =>
     apiClient.post('/aiAddTask', taskPayload);
+
+// Preview AI cost endpoints (no side effects)
+export const previewQuery = (prompt) =>
+    apiClient.post('/aiQuery?preview=true', { prompt });
+
+export const previewAddTask = (taskPayload) =>
+    apiClient.post('/aiAddTask?preview=true', taskPayload);
 
 // Comprar Demi Coins (solo testing +100)
 export const addCoins = () =>
