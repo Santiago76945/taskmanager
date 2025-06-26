@@ -209,3 +209,26 @@
     background: var(--color-primary);
     color: var(--color-bg);
 }
+
+.aiassistant__container {
+    display: flex;
+    flex-direction: column;
+    /* Antes: height: 100%; */
+    /* Ahora: altura total de viewport menos márgenes */
+    height: calc(100vh - 2 * var(--spacing-md));
+    margin: var(--spacing-md);
+    box-sizing: border-box;          /* incluye padding y border en el cálculo de height */
+    background: var(--color-surface);
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.aiassistant__chat {
+    flex: 1;                         /* ocupa todo el espacio disponible */
+    padding: var(--spacing-md);
+    overflow-y: auto;                /* scroll interno siempre activo */
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
