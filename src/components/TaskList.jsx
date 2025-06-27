@@ -37,9 +37,7 @@ export default function TaskList() {
         try {
             const { data } = await api.getTasks()
             setTasks(data)
-            const tags = Array.from(
-                new Set(data.filter(t => t.tag).map(t => t.tag))
-            )
+            const tags = Array.from(new Set(data.filter(t => t.tag).map(t => t.tag)))
             setAvailableTags(tags)
         } catch (err) {
             console.error('Error fetching tasks:', err)
@@ -192,26 +190,34 @@ export default function TaskList() {
                 </button>
             </div>
 
-            {/* Task list */}
-            <ul className="tasklist__list">
-                {filteredTasks.map(t => (
-                    <li key={t._id} className="tasklist__list-item">
-                        <div
-                            className="tasklist__item-card"
-                            onClick={() => openView(t)}
-                        >
-                            <div className="tasklist__item-content">
-                                <span className="tasklist__item-title">{t.title}</span>
-                                <div className="tasklist__item-meta">
-                                    <span>Deadline: {new Date(t.deadline).toLocaleString()}</span>
-                                    <span className="tasklist__item-status">{t.status}</span>
-                                    {t.tag && <span className="tasklist__item-tag">#{t.tag}</span>}
+            {/* Task list or empty state */}
+            {filteredTasks.length === 0 ? (
+                <div className="tasklist__empty">
+                    <p className="tasklist__empty-text">
+                        Nada que mostrar aquí! Añade tu primer tarea.
+                    </p>
+                </div>
+            ) : (
+                <ul className="tasklist__list">
+                    {filteredTasks.map(t => (
+                        <li key={t._id} className="tasklist__list-item">
+                            <div
+                                className="tasklist__item-card"
+                                onClick={() => openView(t)}
+                            >
+                                <div className="tasklist__item-content">
+                                    <span className="tasklist__item-title">{t.title}</span>
+                                    <div className="tasklist__item-meta">
+                                        <span>Deadline: {new Date(t.deadline).toLocaleString()}</span>
+                                        <span className="tasklist__item-status">{t.status}</span>
+                                        {t.tag && <span className="tasklist__item-tag">#{t.tag}</span>}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </li>
-                ))}
-            </ul>
+                        </li>
+                    ))}
+                </ul>
+            )}
 
             {/* Detail Popup */}
             <Popup
