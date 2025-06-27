@@ -79,11 +79,10 @@ export const previewQuery = payload =>
 export const previewAddTask = payload =>
     apiClient.post('/aiAddTask?preview=true', payload);
 
-// Comprar Demi Coins (solo testing +100)
-export const addCoins = () =>
-    apiClient.post('/addCoins', { amount: 100 });
+// Comprar Demi Coins — recibe la cantidad a añadir según el paquete seleccionado
+export const addCoins = (amount) =>
+    apiClient.post('/addCoins', { amount });
 
 // Perfil de usuario
 export const getProfile = () =>
     apiClient.get('/me');
-

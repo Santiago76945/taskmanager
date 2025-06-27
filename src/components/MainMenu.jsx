@@ -213,24 +213,37 @@ export default function MainMenu() {
                     onClose={() => setConfirmOpen(false)}
                     title="Confirmar borrado de todas las tareas"
                 >
-                    <p>
+                    <p className="confirm-popup__message">
                         ¿Estás seguro que deseas borrar <strong>todas</strong> tus tareas? Esta acción es <strong>irreversible</strong>.
                     </p>
-                    <p>Para confirmar, escribe exactamente:</p>
-                    <pre className="confirmation-text">quiero borrar todo</pre>
+                    <p className="confirm-popup__subtitle">
+                        Para confirmar, escribe exactamente:
+                    </p>
+                    <pre className="confirm-popup__code">quiero borrar todo</pre>
                     <input
-                        className="form-input mt-sm"
+                        type="text"
+                        className="confirm-popup__input"
                         placeholder="Escribe aquí..."
                         value={inputText}
                         onChange={e => setInputText(e.target.value)}
                     />
-                    {confirmError && <p className="text-danger mt-xs">{confirmError}</p>}
-                    {confirmSuccess && <p className="text-success mt-xs">{confirmSuccess}</p>}
-                    <div className="flex justify-end mt-md">
-                        <button className="btn btn-secondary m-sm" onClick={() => setConfirmOpen(false)}>
+                    {confirmError && (
+                        <p className="confirm-popup__error">{confirmError}</p>
+                    )}
+                    {confirmSuccess && (
+                        <p className="confirm-popup__success">{confirmSuccess}</p>
+                    )}
+                    <div className="confirm-popup__actions">
+                        <button
+                            className="confirm-popup__btn confirm-popup__btn--cancel"
+                            onClick={() => setConfirmOpen(false)}
+                        >
                             Cancelar
                         </button>
-                        <button className="btn btn-danger m-sm" onClick={handleDeleteAll}>
+                        <button
+                            className="confirm-popup__btn confirm-popup__btn--confirm"
+                            onClick={handleDeleteAll}
+                        >
                             Confirmar borrado
                         </button>
                     </div>

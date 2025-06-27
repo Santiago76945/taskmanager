@@ -215,7 +215,7 @@
     flex-direction: column;
     /* Antes: height: 100%; */
     /* Ahora: altura total de viewport menos márgenes */
-    height: calc(100vh - 2 * var(--spacing-md));
+    height: calc(90vh - 2 * var(--spacing-md));
     margin: var(--spacing-md);
     box-sizing: border-box;          /* incluye padding y border en el cálculo de height */
     background: var(--color-surface);
