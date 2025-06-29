@@ -11,7 +11,6 @@ import ad1Image from '../ads/super-luckys-adventure/super-luckys-adventure.png'
 
 const ADS = [
   { config: ad1Config, image: ad1Image },
-  // { config: ad2Config, image: ad2Image },
 ]
 
 export default function AdBanner({ onRequestDisableAds }) {
@@ -22,7 +21,6 @@ export default function AdBanner({ onRequestDisableAds }) {
   )
   const [ad, setAd] = useState(null)
 
-  // Al montar, si no están desactivados y sale 1/5, elige un anuncio aleatorio
   useEffect(() => {
     if (adsDisabled) return
     if (Math.random() < 0.2) {
@@ -32,7 +30,6 @@ export default function AdBanner({ onRequestDisableAds }) {
     }
   }, [adsDisabled])
 
-  // Cuenta regresiva de 5 a 0
   useEffect(() => {
     if (!show) return
     if (count > 0) {
@@ -42,7 +39,6 @@ export default function AdBanner({ onRequestDisableAds }) {
   }, [show, count])
 
   const handleSkip = () => setShow(false)
-
   const handleDisable = () => {
     if (typeof onRequestDisableAds === 'function') {
       onRequestDisableAds()
@@ -52,7 +48,6 @@ export default function AdBanner({ onRequestDisableAds }) {
       setShow(false)
     }
   }
-
   const handleMoreInfo = () => {
     if (ad?.config.link) {
       window.open(ad.config.link, '_blank', 'noopener')
@@ -66,26 +61,34 @@ export default function AdBanner({ onRequestDisableAds }) {
 
   return (
     <>
-      {/* CSS embebido para AdBanner */}
       <style>{`
+        /* Overlay: permite scroll vertical y padding */
         .adbanner-overlay {
           position: fixed;
-          top: 0; left: 0; right: 0; bottom: 0;
+          inset: 0;
           background: rgba(0,0,0,0.6);
           display: flex;
           align-items: center;
           justify-content: center;
+          padding: 1rem;
+          overflow-y: auto;
           z-index: 1000;
         }
+
+        /* Contenedor: ancho fluido y límite de altura */
         .adbanner-container {
           background: #fff;
           border-radius: 8px;
-          max-width: 90%;
-          width: 400px;
+          width: 100%;
+          max-width: 400px;
+          max-height: 90vh;
           padding: 16px;
+          box-sizing: border-box;
+          overflow-y: auto;
           text-align: center;
           box-shadow: 0 8px 24px rgba(0,0,0,0.2);
         }
+
         .adbanner-header {
           font-size: 0.9rem;
           color: #888;
@@ -107,13 +110,16 @@ export default function AdBanner({ onRequestDisableAds }) {
           color: #333;
           margin-bottom: 16px;
         }
+
+        /* Botones: flex-wrap para que en pantallas estrechas bajen a segunda línea */
         .adbanner-buttons {
           display: flex;
+          flex-wrap: wrap;
           gap: 8px;
           justify-content: center;
         }
         .adbanner-button {
-          flex: 1;
+          flex: 1 1 100px;
           padding: 8px 12px;
           border: none;
           border-radius: 4px;
@@ -132,6 +138,22 @@ export default function AdBanner({ onRequestDisableAds }) {
         .adbanner-moreinfo {
           background: #007bff;
           color: #fff;
+        }
+
+        /* Ajustes para pantallas muy pequeñas */
+        @media (max-width: 360px) {
+          .adbanner-container {
+            padding: 12px;
+          }
+          .adbanner-title {
+            font-size: 1.1rem;
+          }
+          .adbanner-body {
+            font-size: 0.9rem;
+          }
+          .adbanner-button {
+            flex: 1 1 100%;
+          }
         }
       `}</style>
 
