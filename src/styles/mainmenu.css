@@ -152,3 +152,12 @@
     /* cuando esté marcado (dark mode on), pon el thumb en color-bg (oscuro) */
     background-color: var(--color-bg);
 }
+
+/* Responsive: stats 2×2 en pantallas estrechas */
+@media (max-width: 520px) {
+    .mainmenu__stats {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-md);
+    }
+}
