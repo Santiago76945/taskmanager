@@ -5,9 +5,6 @@ import React, { useState, useEffect } from 'react'
 // Importa aquí todas las configuraciones de anuncios y sus imágenes
 import ad1Config from '../ads/super-luckys-adventure/config.json'
 import ad1Image from '../ads/super-luckys-adventure/super-luckys-adventure.png'
-// Si tienes más anuncios, simplemente importa más:
-// import ad2Config from '../ads/otro-anuncio/config.json'
-// import ad2Image from '../ads/otro-anuncio/otro-anuncio.png'
 
 const ADS = [
   { config: ad1Config, image: ad1Image },
@@ -75,14 +72,15 @@ export default function AdBanner({ onRequestDisableAds }) {
           z-index: 1000;
         }
 
-        /* Contenedor: ancho fluido y límite de altura */
+        /* Contenedor: usa variables para modo claro/oscuro */
         .adbanner-container {
-          background: #fff;
-          border-radius: 8px;
+          background: var(--color-bg);
+          border-radius: var(--border-radius-lg);
           width: 100%;
           max-width: 400px;
           max-height: 90vh;
-          padding: 16px;
+          max-height: 90dvh;
+          padding: var(--spacing-md);
           box-sizing: border-box;
           overflow-y: auto;
           text-align: center;
@@ -91,59 +89,63 @@ export default function AdBanner({ onRequestDisableAds }) {
 
         .adbanner-header {
           font-size: 0.9rem;
-          color: #888;
-          margin-bottom: 8px;
+          color: var(--color-text-muted);
+          margin-bottom: 0.5rem;
         }
         .adbanner-title {
           font-size: 1.25rem;
           font-weight: bold;
-          margin-bottom: 12px;
+          color: var(--color-text);
+          margin-bottom: var(--spacing-sm);
         }
         .adbanner-image {
           width: 100%;
           height: auto;
-          border-radius: 4px;
-          margin-bottom: 12px;
+          border-radius: var(--border-radius);
+          margin-bottom: var(--spacing-md);
         }
         .adbanner-body {
           font-size: 1rem;
-          color: #333;
-          margin-bottom: 16px;
+          color: var(--color-text);
+          margin-bottom: var(--spacing-lg);
         }
 
-        /* Botones: flex-wrap para que en pantallas estrechas bajen a segunda línea */
+        /* Botones: variables de color y buen contraste */
         .adbanner-buttons {
           display: flex;
           flex-wrap: wrap;
-          gap: 8px;
+          gap: var(--spacing-sm);
           justify-content: center;
         }
         .adbanner-button {
           flex: 1 1 100px;
-          padding: 8px 12px;
+          padding: 0.5rem 1rem;
           border: none;
-          border-radius: 4px;
+          border-radius: var(--border-radius);
           cursor: pointer;
-          font-size: 0.95rem;
+          font-size: 1rem;
         }
-        .adbanner-skip,
-        .adbanner-disable {
-          background: #ddd;
-          color: #333;
+        .adbanner-skip {
+          background: var(--color-secondary);
+          color: var(--color-bg);
         }
         .adbanner-skip:disabled {
           opacity: 0.6;
           cursor: default;
         }
         .adbanner-moreinfo {
-          background: #007bff;
-          color: #fff;
+          background: var(--color-primary);
+          color: var(--color-bg);
+        }
+        .adbanner-disable {
+          background: var(--color-secondary);
+          color: var(--color-bg);
         }
 
-        /* Ajustes para pantallas muy pequeñas */
+        /* Responsive pequeños */
         @media (max-width: 360px) {
           .adbanner-container {
-            padding: 12px;
+            padding: var(--spacing-sm);
           }
           .adbanner-title {
             font-size: 1.1rem;
@@ -193,3 +195,4 @@ export default function AdBanner({ onRequestDisableAds }) {
     </>
   )
 }
+
