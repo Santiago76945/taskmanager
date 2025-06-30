@@ -222,3 +222,15 @@
 [style*="font-size:0.9"] {
     font-size: 1rem !important;
 }
+
+/* Dark mode: hacer texto de botones negro en ImportTasks */
+:root.dark .btn-secondary {
+    color: var(--color-bg);
+}
+
+:root.dark .btn-primary {
+    color: var(--color-bg);
+}
+
+
+

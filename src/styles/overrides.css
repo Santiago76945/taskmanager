@@ -18,10 +18,19 @@
 
 /* Micro-animación “pop” para valores que cambian */
 @keyframes pop {
-    0%   { transform: scale(1); }
-    50%  { transform: scale(1.2); }
-    100% { transform: scale(1); }
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+    }
 }
+
 .pop {
     display: inline-block;
     animation: pop 0.4s ease;
@@ -39,6 +48,14 @@
 }
 
 /* Delays genéricos para animaciones */
-.delay-1 { animation-delay: 0.3s !important; }
-.delay-2 { animation-delay: 0.6s !important; }
-.delay-3 { animation-delay: 0.9s !important; }
+.delay-1 {
+    animation-delay: 0.3s !important;
+}
+
+.delay-2 {
+    animation-delay: 0.6s !important;
+}
+
+.delay-3 {
+    animation-delay: 0.9s !important;
+}
