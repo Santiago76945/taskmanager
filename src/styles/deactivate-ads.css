@@ -106,3 +106,101 @@
     color: var(--color-text-muted);
     margin: 0 0 var(--spacing-md);
 }
+
+/* Dark mode overrides */
+:root.dark .popup-overlay-deactivate-ads-modal {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+:root.dark .popup-card.deactivate-ads-card {
+    background: var(--color-card-bg);
+    color: var(--color-text);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+:root.dark .popup-close-btn {
+    color: var(--color-text-muted);
+}
+
+:root.dark .popup-close-btn:hover {
+    color: var(--color-primary-hover);
+}
+
+:root.dark .popup-header h3 {
+    color: var(--color-text);
+}
+
+:root.dark .popup-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+:root.dark .ads-packages {
+    gap: var(--spacing-md);
+}
+
+:root.dark .ads-package {
+    background: var(--color-card-bg);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+:root.dark .ads-package-label {
+    color: var(--color-primary-hover);
+}
+
+:root.dark .ads-package-price {
+    color: var(--color-text-muted);
+}
+
+:root.dark .ads-package-btn {
+    background: var(--color-primary);
+    color: var(--color-bg);
+}
+
+:root.dark .ads-package-btn:hover {
+    opacity: 0.9;
+}
+
+:root.dark .ads-package-exit {
+    background: var(--color-secondary);
+    color: var(--color-bg);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+:root.dark .ads-package-exit:hover {
+    filter: brightness(1.1);
+}
+
+/* ============================= */
+/* Ajustes tamaño y scroll modal */
+/* ============================= */
+
+.popup-card.deactivate-ads-card {
+    /* No ocupar todo el alto de la pantalla */
+    max-height: calc(100vh - 4rem);
+    /* deja 2rem de margen arriba y 2rem abajo */
+    overflow-y: auto;
+    /* permite scroll interno si el contenido crece */
+    box-sizing: border-box;
+}
+
+/* Botón de cerrar (✕) más grande */
+.popup-close-btn {
+    font-size: 1.25rem;
+    /* al menos 1rem, aquí 1.25 para mejor accesibilidad */
+    line-height: 1;
+    /* ajusta si fuera necesario */
+    padding: 0.5rem;
+    /* agranda la zona clicable */
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+/* Asegurar buen contraste en dark mode también */
+:root.dark .popup-close-btn {
+    color: var(--color-text-muted);
+}
+
+:root.dark .popup-close-btn:hover {
+    color: var(--color-primary-hover);
+}

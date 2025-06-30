@@ -172,8 +172,8 @@ export default function ImportTasks() {
                         <code>recommendedDate</code>, <code>creationDate</code> (opcionales)
                     </li>
                     <li>
-                        <code>depends</code> (boolean) y <code>dependsOn</code> (id)
-                        si <code>depends: true</code>
+                        <code>depends</code> (boolean) y <code>dependsOn</code> (id) si{' '}
+                        <code>depends: true</code>
                     </li>
                     <li>
                         <code>stalledReason</code> si <code>status: "estancada"</code>
@@ -203,6 +203,16 @@ export default function ImportTasks() {
   { "title": "Enviar CV", "status": "comenzada", "deadline": "2025-05-30T09:00:00Z", "priority": "media", "tag": "otro" }
 ]`}
                 </pre>
+
+                {/* Botón de cierre al final */}
+                <div className="flex justify-center mt-md">
+                    <button
+                        className="btn btn-secondary"
+                        onClick={() => setHelpOpen(false)}
+                    >
+                        Cerrar
+                    </button>
+                </div>
             </Popup>
         </div>
     )
