@@ -232,3 +232,10 @@
     flex-direction: column;
     gap: var(--spacing-sm);
 }
+
+.aiassistant__option-btn {
+    font-size: 1rem; /* 16px */
+}
+
+
+

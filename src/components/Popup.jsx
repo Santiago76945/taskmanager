@@ -36,12 +36,8 @@ export default function Popup({ isOpen, onClose, title, width = '480px', childre
                 {title && (
                     <div className="popup-header">
                         <h3>{title}</h3>
-                        <button className="popup-close" onClick={onClose}>
-                            &times;
-                        </button>
                     </div>
                 )}
-
                 <div className="popup-body">{children}</div>
             </div>
         </div>,

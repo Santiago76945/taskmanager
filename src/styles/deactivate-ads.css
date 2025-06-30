@@ -100,3 +100,9 @@
 .deactivate-ads-body p {
     text-align: center;
 }
+
+.ads-package-price {
+    font-size: 1rem;
+    color: var(--color-text-muted);
+    margin: 0 0 var(--spacing-md);
+}

@@ -1,4 +1,4 @@
-/* src/styles/mainmenu-confirm-popup.css */
+/* src/styles/delete-all-confirm-popup.css */
 
 /* Mensaje principal y subtítulo */
 .confirm-popup__message {
@@ -6,30 +6,37 @@
     font-size: 1rem;
     color: var(--color-text);
     margin-bottom: var(--spacing-sm);
+    text-align: center;
 }
 
 .confirm-popup__subtitle {
     font-family: var(--font-sans);
-    font-size: 0.875rem;
+    font-size: 1rem;
+    /* actualizado a 1rem */
     color: var(--color-text-muted);
     margin-bottom: var(--spacing-xs);
+    text-align: center;
 }
 
 /* Texto preformateado */
 .confirm-popup__code {
     font-family: monospace;
+    font-size: 1rem;
+    /* añadido para garantizar mínimo 1rem */
     background: var(--color-bg);
     border: 1px solid var(--color-primary);
     border-radius: var(--border-radius);
     padding: var(--spacing-sm) var(--spacing-md);
     margin-bottom: var(--spacing-md);
+    text-align: center;
 }
 
 /* Campo de entrada */
 .confirm-popup__input {
     width: 100%;
     font-family: var(--font-sans);
-    font-size: 0.95rem;
+    font-size: 1rem;
+    /* actualizado a 1rem */
     padding: var(--spacing-sm) var(--spacing-md);
     border: 1px solid var(--color-primary);
     border-radius: var(--border-radius);
@@ -38,24 +45,28 @@
 }
 
 /* Mensajes de error y éxito */
-.confirm-popup__error {
+.confirm-popup__error,
+.confirm-popup__success {
     font-family: var(--font-sans);
-    font-size: 0.875rem;
-    color: var(--color-error);
+    font-size: 1rem;
+    /* actualizado a 1rem */
     margin-bottom: var(--spacing-sm);
+    text-align: center;
+}
+
+.confirm-popup__error {
+    color: var(--color-error);
 }
 
 .confirm-popup__success {
-    font-family: var(--font-sans);
-    font-size: 0.875rem;
     color: var(--color-success);
-    margin-bottom: var(--spacing-sm);
 }
 
 /* Contenedor de botones */
 .confirm-popup__actions {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
+    /* centrado */
     gap: var(--spacing-sm);
     margin-top: var(--spacing-md);
 }
@@ -63,7 +74,8 @@
 /* Botones */
 .confirm-popup__btn {
     font-family: var(--font-sans);
-    font-size: 0.875rem;
+    font-size: 1rem;
+    /* actualizado a 1rem */
     padding: var(--spacing-sm) var(--spacing-md);
     border: none;
     border-radius: var(--border-radius);
@@ -91,24 +103,9 @@
     filter: brightness(0.9);
 }
 
-/* Centrar textos */
-.confirm-popup__message,
-.confirm-popup__subtitle,
-.confirm-popup__code {
-    text-align: center;
-}
-
 /* Recolorizar los <strong> dentro del mensaje principal */
 .confirm-popup__message strong {
     color: var(--color-destructive);
-    /* rojo para mejor contraste */
 }
 
-/* Contenedor de botones centrado */
-.confirm-popup__actions {
-    display: flex;
-    justify-content: center;
-    /* antes era flex-end */
-    gap: var(--spacing-sm);
-    margin-top: var(--spacing-md);
-}
+
