@@ -139,9 +139,3 @@ body,
 #root {
     width: 100%;
 }
-
-.main-menu-card {
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%);
-}

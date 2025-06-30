@@ -83,3 +83,22 @@
         opacity: 1;
     }
 }
+
+/* Evita overflow horizontal en el popup */
+.popup-card {
+    max-width: 90vw;
+    /* nunca más ancho que el 90% del viewport */
+    box-sizing: border-box;
+}
+
+/* Ajusta los bloques de código dentro del body */
+.popup-body pre {
+    white-space: pre-wrap;
+    /* permite que el texto se rompa */
+    word-wrap: break-word;
+    /* cierra palabras largas */
+    overflow-x: auto;
+    /* scroll interno sólo en <pre> si hace falta */
+    max-width: 100%;
+    /* no desborda su contenedor */
+}
