@@ -87,6 +87,7 @@
 /* Evita overflow horizontal en el popup */
 .popup-card {
     max-width: 90vw;
+    max-width: 90dvw;
     /* nunca más ancho que el 90% del viewport */
     box-sizing: border-box;
 }
@@ -101,4 +102,8 @@
     /* scroll interno sólo en <pre> si hace falta */
     max-width: 100%;
     /* no desborda su contenedor */
+}
+
+.popup-close-btn {
+    font-size: 1rem;
 }
