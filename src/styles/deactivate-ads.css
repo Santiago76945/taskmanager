@@ -176,7 +176,8 @@
 
 .popup-card.deactivate-ads-card {
     /* No ocupar todo el alto de la pantalla */
-    max-height: calc(100vh - 4rem);
+    max-height: 80vh;
+    max-height: 80dvh;
     /* deja 2rem de margen arriba y 2rem abajo */
     overflow-y: auto;
     /* permite scroll interno si el contenido crece */
